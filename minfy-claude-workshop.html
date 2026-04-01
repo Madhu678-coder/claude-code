@@ -1750,12 +1750,16 @@ const App = {
       this.showToast(`+${task.points} XP earned!`, 'success');
       this.showCelebration();
 
-      // Save scroll position before re-render
       const mainContent = document.getElementById('main-content');
-      const scrollTop = mainContent ? mainContent.scrollTop : 0;
       this.renderWorkshop(mainContent);
-      // Restore scroll position after re-render
-      if (mainContent) mainContent.scrollTop = scrollTop;
+
+      // Scroll to the next active (expanded) task
+      setTimeout(() => {
+        const nextActive = mainContent.querySelector('.task-card.expanded');
+        if (nextActive) {
+          nextActive.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     } catch (error) {
       console.error('Task completion error:', error);
       this.showToast(error.message || 'Failed to complete task', 'undo');
