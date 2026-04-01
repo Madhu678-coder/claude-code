@@ -5,6 +5,7 @@
 # ─────────────────────────────────────────────
 
 LOG_FILE="/var/log/workshop-boot.log"
+touch "$LOG_FILE" 2>/dev/null || { LOG_FILE="/tmp/workshop-boot.log"; touch "$LOG_FILE"; }
 exec >> "$LOG_FILE" 2>&1
 echo "=========================================="
 echo "Boot startup: $(date)"
@@ -18,8 +19,17 @@ APP_DIR="/home/ec2-user/workshop"
 # ── Wait for network ──
 echo "Waiting for network..."
 for i in $(seq 1 30); do
-  PUBLIC_IP=$(curl -s --max-time 5 http://169.254.169.254/latest/meta-data/public-ipv4)
-  if [ -n "$PUBLIC_IP" ]; then
+  # IMDSv2 requires a token first
+  TOKEN=$(curl -s --max-time 2 -X PUT "http://169.254.169.254/latest/api/token" \
+    -H "X-aws-ec2-metadata-token-ttl-seconds: 300" 2>/dev/null)
+  if [ -n "$TOKEN" ]; then
+    PUBLIC_IP=$(curl -s --max-time 5 -H "X-aws-ec2-metadata-token: $TOKEN" \
+      http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null)
+  else
+    # Fallback to IMDSv1
+    PUBLIC_IP=$(curl -s --max-time 5 http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null)
+  fi
+  if [ -n "$PUBLIC_IP" ] && [[ "$PUBLIC_IP" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     echo "Got public IP: $PUBLIC_IP"
     break
   fi

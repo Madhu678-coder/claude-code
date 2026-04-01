@@ -10,6 +10,10 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 echo "Installing boot startup service..."
 
+# Create log file with proper permissions
+sudo touch /var/log/workshop-boot.log
+sudo chown ec2-user:ec2-user /var/log/workshop-boot.log
+
 # Copy the boot script
 sudo cp "$SCRIPT_DIR/boot-startup.sh" /usr/local/bin/workshop-boot.sh
 sudo chmod +x /usr/local/bin/workshop-boot.sh
