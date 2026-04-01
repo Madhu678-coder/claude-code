@@ -1,0 +1,2371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Code Workshop — Minfy AI CoE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+/* ═══════════════════════════════════════════
+   MINFY AI CoE — CLAUDE CODE WORKSHOP
+   Color Palette: Minfy Blue #1C55BB + Light background
+   ═══════════════════════════════════════════ */
+
+:root {
+  /* Minfy Brand */
+  --primary: #1C55BB;
+  --primary-dark: #1444A0;
+  --primary-light: #2B6AD8;
+  --primary-soft: rgba(28, 85, 187, 0.10);
+  --primary-glow: rgba(28, 85, 187, 0.06);
+  /* Light theme surfaces */
+  --bg: #F4F7FD;
+  --surface: #FFFFFF;
+  --surface2: #F0F4FB;
+  --surface3: #E8EDF8;
+  --border: #D5DFF0;
+  --border-light: #E8EDF8;
+  /* Text */
+  --text: #0F1B35;
+  --text2: #3D5080;
+  --text-muted: #6B7FA8;
+  /* Accents */
+  --orange: #E8580A;
+  --orange-soft: rgba(232, 88, 10, 0.10);
+  --green: #1A7A4A;
+  --green-soft: rgba(26, 122, 74, 0.10);
+  --amber: #C47A00;
+  --amber-soft: rgba(196, 122, 0, 0.10);
+  --purple: #6B3FA0;
+  --purple-soft: rgba(107, 63, 160, 0.10);
+  /* Aliases for compat */
+  --dark: #0F1B35;
+  --dark2: #FFFFFF;
+  --dark3: #F0F4FB;
+  --light: #0F1B35;
+  --light2: #3D5080;
+  --mid-gray: #6B7FA8;
+  --light-gray: #D5DFF0;
+  --teal: #1C55BB;
+  --teal-soft: rgba(28, 85, 187, 0.10);
+  --blue: #1C55BB;
+  --sidebar-width: 260px;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow-sm: 0 1px 3px rgba(28,85,187,0.08);
+  --shadow-md: 0 4px 16px rgba(28,85,187,0.12);
+  --shadow-lg: 0 8px 32px rgba(28,85,187,0.16);
+  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+h1, h2, h3, h4, h5, h6 { font-family: 'Syne', sans-serif; line-height: 1.25; font-weight: 700; color: var(--text); }
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--primary-soft);
+  border: 1px solid rgba(28,85,187,0.18);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.85em;
+  color: var(--primary-dark);
+}
+pre {
+  background: #1a2540;
+  border: 1px solid rgba(28,85,187,0.25);
+  color: #e8f0ff;
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+  font-size: 0.83rem;
+  line-height: 1.6;
+  margin: 0.75rem 0;
+  max-width: 100%;
+  position: relative;
+}
+pre code { background: none; border: none; padding: 0; color: #ffffff; font-size: inherit; white-space: pre-wrap; word-wrap: break-word; }
+.copy-btn {
+  position: absolute; top: 0.5rem; right: 0.5rem;
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.45); border-radius: 4px; padding: 4px 6px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+.copy-btn:hover { background: rgba(255,255,255,0.16); color: rgba(255,255,255,0.9); }
+.copy-btn.copied { color: #6bcf9f; border-color: rgba(107,207,159,0.4); }
+.copy-btn svg { width: 16px; height: 16px; }
+
+/* ═══════ GLOBAL SVG SAFETY — no SVG ever stretches full width ═══════ */
+.reference-header svg, .reference-chevron,
+.task-status-icon svg,
+.adv-tryit-toggle svg,
+.nav-item svg, .logout-btn svg { display: block; flex-shrink: 0; overflow: visible; }
+/* Hard-cap inline icon SVGs */
+.reference-chevron { width: 16px !important; height: 16px !important; max-width: 16px !important; }
+.reference-header > svg:first-child { width: 18px !important; height: 18px !important; max-width: 18px !important; }
+.task-status-icon svg { width: 14px !important; height: 14px !important; max-width: 14px !important; }
+.adv-tryit-toggle svg { width: 16px !important; height: 16px !important; max-width: 16px !important; }
+.nav-item svg { width: 18px !important; height: 18px !important; max-width: 18px !important; }
+
+/* ═══════ SUBTLE GRID BACKGROUND ═══════ */
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    linear-gradient(rgba(28,85,187,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(28,85,187,0.025) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ═══════ LOGIN SCREEN ═══════ */
+.login-screen {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(145deg, #0F1B35 0%, #1C3070 50%, #1C55BB 100%);
+  position: relative; overflow: hidden; z-index: 1;
+}
+.login-screen .glow1 {
+  position: absolute; top: -20%; right: -10%; width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(28,85,187,0.25) 0%, transparent 65%);
+  border-radius: 50%; animation: loginGlow 10s ease-in-out infinite;
+}
+.login-screen .glow2 {
+  position: absolute; bottom: -20%; left: -10%; width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(232,88,10,0.12) 0%, transparent 65%);
+  border-radius: 50%; animation: loginGlow 12s ease-in-out infinite reverse;
+}
+@keyframes loginGlow {
+  0%, 100% { transform: scale(1) translate(0,0); }
+  50% { transform: scale(1.12) translate(15px, -10px); }
+}
+.login-container { position: relative; z-index: 2; width: 100%; max-width: 440px; padding: 2rem; }
+.login-logo { text-align: center; margin-bottom: 2.5rem; }
+.minfy-badge {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25);
+  padding: 0.35rem 0.9rem; border-radius: 20px; margin-bottom: 1.25rem;
+  font-size: 0.78rem; font-weight: 600; color: #fff; letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.minfy-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: #7eb8ff; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+.login-logo .logo-icon {
+  width: 64px; height: 64px; margin: 0 auto 1rem;
+  background: rgba(255,255,255,0.15);
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 16px; display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem; box-shadow: 0 0 30px rgba(28,85,187,0.4);
+}
+.login-logo h1 { font-size: 1.6rem; font-weight: 800; color: #fff; letter-spacing: -0.03em; }
+.login-logo h1 span { color: #7eb8ff; }
+.login-logo p { color: rgba(255,255,255,0.65); font-size: 0.9rem; margin-top: 0.4rem; }
+.login-card {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.16);
+  border-radius: var(--radius);
+  padding: 2rem; backdrop-filter: blur(20px);
+}
+.login-card h2 { color: #fff; font-size: 1.1rem; margin-bottom: 1.5rem; font-family: 'DM Sans', sans-serif; font-weight: 600; }
+.form-group { margin-bottom: 1.25rem; }
+.form-group label {
+  display: block; font-size: 0.75rem; font-weight: 600;
+  color: rgba(255,255,255,0.6); margin-bottom: 0.4rem;
+  text-transform: uppercase; letter-spacing: 0.07em;
+}
+.form-group input {
+  width: 100% !important; 
+  padding: 0.75rem 1rem;
+  background: rgba(255,255,255,0.12) !important; 
+  border: 1px solid rgba(255,255,255,0.3) !important;
+  border-radius: var(--radius-sm); 
+  color: #fff !important;
+  font-family: 'DM Sans', sans-serif; 
+  font-size: 0.95rem;
+  transition: var(--transition); 
+  outline: none;
+  display: block !important; 
+  visibility: visible !important;
+  min-height: 44px !important;
+  -webkit-text-fill-color: #fff !important;
+  opacity: 1 !important;
+}
+.form-group input::placeholder { 
+  color: rgba(255,255,255,0.45) !important; 
+  opacity: 1 !important;
+}
+.form-group input:-webkit-autofill,
+.form-group input:-webkit-autofill:hover,
+.form-group input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #fff !important;
+  -webkit-box-shadow: 0 0 0px 1000px rgba(255,255,255,0.12) inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+.form-group input:focus { border-color: #7eb8ff; box-shadow: 0 0 0 3px rgba(126,184,255,0.18); }
+
+/* Force admin password input to be visible */
+#admin-bootstrap-password {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 100% !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  padding: 0.75rem 1rem !important;
+  background: #1a2540 !important;
+  border: 2px solid #4a7bc8 !important;
+  border-radius: 6px !important;
+  color: #ffffff !important;
+  font-size: 0.95rem !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  z-index: 10 !important;
+  font-family: 'DM Sans', sans-serif !important;
+}
+#admin-bootstrap-password:hover {
+  background: #243555 !important;
+  border-color: #5a8bd8 !important;
+}
+#admin-bootstrap-password::placeholder {
+  color: rgba(255,255,255,0.6) !important;
+  opacity: 1 !important;
+}
+#admin-bootstrap-password:focus {
+  background: #243555 !important;
+  border-color: #7eb8ff !important;
+  box-shadow: 0 0 0 3px rgba(126,184,255,0.3) !important;
+  outline: none !important;
+}
+
+/* Inline admin password input - light theme for main content area */
+#admin-pw-inline {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 100% !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  padding: 0.75rem 1rem !important;
+  background: var(--surface) !important;
+  border: 2px solid var(--border) !important;
+  border-radius: 6px !important;
+  color: var(--text) !important;
+  font-size: 0.95rem !important;
+  -webkit-text-fill-color: var(--text) !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  z-index: 10 !important;
+  font-family: 'DM Sans', sans-serif !important;
+}
+#admin-pw-inline:hover {
+  background: var(--surface2) !important;
+  border-color: var(--primary) !important;
+}
+#admin-pw-inline::placeholder {
+  color: var(--text-muted) !important;
+  opacity: 1 !important;
+}
+#admin-pw-inline:focus {
+  background: var(--surface2) !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgba(28,85,187,0.15) !important;
+  outline: none !important;
+}
+
+.login-error { color: #ffb38a; font-size: 0.85rem; margin-bottom: 1rem; display: none; font-weight: 500; }
+.login-error.visible { display: block; }
+.login-sublink { display: block; text-align: center; margin-top: 0.75rem; font-size: 0.8rem; color: rgba(255,255,255,0.5); }
+.login-sublink:hover { color: #7eb8ff; text-decoration: none; }
+
+/* ═══════ BUTTONS ═══════ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  padding: 0.7rem 1.4rem; border: none; border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 600;
+  cursor: pointer; transition: var(--transition); text-decoration: none; white-space: nowrap;
+}
+.btn-primary {
+  width: 100%; background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: #fff; letter-spacing: 0.01em;
+}
+.btn-primary:hover { opacity: 0.92; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(28,85,187,0.35); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.btn-ghost {
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text2);
+}
+.btn-ghost:hover { background: var(--surface2); border-color: var(--primary); color: var(--primary); }
+.btn-done {
+  background: var(--primary-soft); border: 1px solid rgba(28,85,187,0.25);
+  color: var(--primary); padding: 0.6rem 1.5rem;
+}
+.btn-done:hover { background: rgba(28,85,187,0.18); box-shadow: 0 0 15px rgba(28,85,187,0.18); }
+.btn-done.is-completed {
+  background: rgba(26,122,74,0.10); border-color: rgba(26,122,74,0.3); color: var(--green);
+}
+.btn-sm { padding: 0.45rem 1rem; font-size: 0.82rem; }
+
+/* ═══════ APP SHELL ═══════ */
+.app-shell { display: none; height: 100vh; overflow: hidden; }
+.app-shell.active { display: flex; }
+
+/* ═══════ SIDEBAR ═══════ */
+.sidebar {
+  width: var(--sidebar-width); min-width: var(--sidebar-width);
+  background: linear-gradient(180deg, #0F1B35 0%, #1C3070 100%);
+  display: flex; flex-direction: column;
+  position: relative; z-index: 10; height: 100vh; overflow-y: auto;
+}
+.sidebar-header { padding: 1.25rem 1rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.sidebar-brand { display: flex; align-items: center; gap: 0.75rem; }
+.sidebar-logo {
+  width: 34px; height: 34px;
+  background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; flex-shrink: 0;
+}
+.sidebar-brand-text h2 { font-size: 0.95rem; font-weight: 700; color: #fff; font-family: 'Syne', sans-serif; }
+.sidebar-brand-text span { font-size: 0.72rem; color: rgba(255,255,255,0.5); font-weight: 500; }
+.workshop-badge {
+  margin-top: 0.75rem; padding: 0.3rem 0.6rem;
+  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 6px; font-size: 0.72rem; color: #7eb8ff;
+  font-family: 'JetBrains Mono', monospace; text-align: center; display: none;
+}
+.sidebar-nav { flex: 1; padding: 1rem 0.75rem; display: flex; flex-direction: column; gap: 2px; }
+.nav-item {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.65rem 0.85rem; border-radius: var(--radius-sm);
+  background: none; border: none; color: rgba(255,255,255,0.55);
+  font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 500;
+  cursor: pointer; transition: var(--transition); width: 100%; text-align: left;
+}
+.nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+.nav-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.nav-item.active { background: rgba(255,255,255,0.14); color: #fff; }
+.nav-divider { height: 1px; background: rgba(255,255,255,0.1); margin: 0.5rem 0; }
+.sidebar-footer { padding: 0.75rem; border-top: 1px solid rgba(255,255,255,0.1); }
+.user-info { display: flex; align-items: center; gap: 0.75rem; }
+.user-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--orange), #f08040);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.9rem; font-weight: 700; color: white; flex-shrink: 0;
+}
+.user-details { flex: 1; min-width: 0; }
+.user-details .name { font-size: 0.85rem; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-details .points { font-size: 0.75rem; color: #7eb8ff; font-family: 'JetBrains Mono', monospace; }
+.logout-btn {
+  width: 30px; height: 30px; border-radius: var(--radius-sm);
+  background: none; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.45);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: var(--transition); flex-shrink: 0;
+}
+.logout-btn:hover { background: rgba(232,88,10,0.2); border-color: rgba(232,88,10,0.5); color: #ffb38a; }
+
+/* ═══════ MOBILE ═══════ */
+.mobile-menu-btn {
+  display: none; position: fixed; top: 1rem; left: 1rem; z-index: 100;
+  width: 40px; height: 40px; border-radius: var(--radius-sm);
+  background: var(--primary); border: none;
+  color: #fff; cursor: pointer; align-items: center; justify-content: center;
+}
+.mobile-overlay {
+  display: none; position: fixed; inset: 0; z-index: 9;
+  background: rgba(15,27,53,0.5); backdrop-filter: blur(4px);
+}
+@media (max-width: 768px) {
+  .mobile-menu-btn { display: flex; }
+  .sidebar {
+    position: fixed; left: -100%; top: 0; height: 100vh; z-index: 20;
+    transition: left 0.3s ease; box-shadow: var(--shadow-lg);
+  }
+  .sidebar.open { left: 0; }
+  .mobile-overlay.open { display: block; }
+  .main-content { padding: 1rem; padding-top: 4rem; }
+}
+
+/* ═══════ MAIN CONTENT ═══════ */
+.main-content { flex: 1; overflow-y: auto; overflow-x: hidden; background: var(--bg); min-width: 0; }
+.page-header {
+  padding: 2rem 2.5rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.page-header h1 { font-size: 1.5rem; color: var(--text); }
+.page-header p { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem; }
+.page-body { padding: 1.75rem 2.5rem; max-width: 900px; width: 100%; }
+.page-loading { display: flex; align-items: center; gap: 0.75rem; color: var(--text-muted); padding: 2rem 0; }
+
+/* ═══════ SPINNER ═══════ */
+.spinner {
+  width: 16px; height: 16px; border: 2px solid rgba(28,85,187,0.2);
+  border-top-color: var(--primary); border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ═══════ PREREQS / INTRO BANNER ═══════ */
+.prereqs-banner {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+.prereqs-banner h3 { font-size: 0.82rem; color: var(--primary); margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; font-family: 'DM Sans', sans-serif; font-weight: 700; }
+.prereqs-banner ul { list-style: none; padding: 0; }
+.prereqs-banner li { padding: 0.25rem 0; color: var(--text2); font-size: 0.88rem; padding-left: 1.2rem; position: relative; }
+.prereqs-banner li::before { content: '→'; position: absolute; left: 0; color: var(--primary); font-size: 0.8rem; top: 0.3rem; }
+.permissions-note {
+  margin-top: 1rem; padding: 0.75rem 1rem;
+  background: var(--primary-soft); border: 1px solid rgba(28,85,187,0.15);
+  border-radius: var(--radius-sm); font-size: 0.84rem; color: var(--text2);
+}
+.permissions-note strong { color: var(--primary); }
+
+/* ═══════ AI COE MASCOT BANNER ═══════ */
+.clawd-mascot {
+  display: flex; align-items: center; gap: 1.25rem;
+  background: linear-gradient(135deg, rgba(28,85,187,0.07), rgba(43,106,216,0.04));
+  border: 1px solid rgba(28,85,187,0.15); border-radius: var(--radius);
+  padding: 1rem 1.5rem; margin-bottom: 1.5rem;
+}
+.clawd-mascot .emoji { font-size: 2rem; }
+.clawd-text { font-size: 0.88rem; color: var(--text2); }
+.clawd-text strong { color: var(--primary); }
+
+/* ═══════ REFERENCE CARD ═══════ */
+.reference-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); margin-bottom: 1.5rem; overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.reference-header {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.9rem 1.25rem; cursor: pointer; user-select: none;
+  color: var(--text2); font-size: 0.88rem; font-weight: 600;
+  transition: background 0.15s;
+}
+.reference-header:hover { background: var(--surface2); }
+.reference-header > svg { color: var(--primary); flex-shrink: 0; width: 18px; height: 18px; }
+.reference-chevron { margin-left: auto; transition: transform 0.25s; width: 16px; height: 16px; flex-shrink: 0; color: var(--text-muted); }
+.reference-card.expanded .reference-chevron { transform: rotate(180deg); }
+.reference-body { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+.reference-card.expanded .reference-body { max-height: 2000px; }
+.reference-body-inner { padding: 1.25rem 1.5rem; border-top: 1px solid var(--border); }
+.reference-body-inner h4 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--primary); margin-bottom: 0.75rem; margin-top: 1.25rem; font-family: 'DM Sans', sans-serif; font-weight: 700; }
+.reference-body-inner h4:first-child { margin-top: 0; }
+.reference-body-inner table { width: 100%; border-collapse: collapse; font-size: 0.84rem; margin-bottom: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+.reference-body-inner thead tr { background: var(--surface2); }
+.reference-body-inner th { padding: 0.55rem 0.9rem; border-bottom: 1px solid var(--border); text-align: left; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
+.reference-body-inner td { padding: 0.55rem 0.9rem; border-bottom: 1px solid var(--border-light); color: var(--text2); }
+.reference-body-inner td:first-child { font-weight: 600; color: var(--text); width: 38%; background: rgba(28,85,187,0.03); }
+.reference-body-inner tr:last-child td { border-bottom: none; }
+.reference-body-inner ul { list-style: none; padding: 0; }
+.reference-body-inner ul li { padding: 0.2rem 0 0.2rem 1rem; position: relative; color: var(--text2); font-size: 0.88rem; }
+.reference-body-inner ul li::before { content: '→'; position: absolute; left: 0; color: var(--primary); font-size: 0.75rem; top: 0.35rem; }
+
+/* ═══════ PROGRESS ═══════ */
+.progress-section { margin-bottom: 1.5rem; }
+.progress-stats { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+.completed-count { font-size: 0.85rem; color: var(--text-muted); }
+.points-total { font-size: 0.85rem; color: var(--primary); font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+.progress-bar-track { height: 6px; background: var(--surface3); border-radius: 4px; overflow: hidden; border: 1px solid var(--border); }
+.progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-light)); border-radius: 4px; transition: width 0.6s ease; }
+
+/* ═══════ TASKS ═══════ */
+.tasks-section-label {
+  font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
+}
+.task-list { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem; }
+.task-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+.task-card:hover { border-color: rgba(28,85,187,0.3); box-shadow: var(--shadow-md); }
+.task-card.completed { border-color: rgba(26,122,74,0.3); background: rgba(26,122,74,0.02); }
+.task-card.locked { opacity: 0.55; }
+.task-header {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 1rem 1.25rem; cursor: pointer; user-select: none;
+}
+.task-status-icon {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 2px solid var(--border); display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; color: var(--text-muted); transition: var(--transition);
+}
+.task-status-icon svg { width: 14px; height: 14px; flex-shrink: 0; }
+.task-status-icon.done { background: rgba(26,122,74,0.12); border-color: var(--green); color: var(--green); }
+.task-card:not(.locked):not(.completed) .task-status-icon { border-color: rgba(28,85,187,0.3); color: var(--primary); }
+.task-info { flex: 1; min-width: 0; }
+.task-title { font-size: 0.92rem; font-weight: 600; color: var(--text); }
+.task-subtitle { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.15rem; }
+.task-subtitle.locked-hint { color: var(--text-muted); opacity: 0.6; }
+.task-meta { flex-shrink: 0; display: flex; align-items: center; gap: 0.5rem; }
+
+/* ─── POINTS TIER BADGES ─── */
+.task-points {
+  font-size: 0.72rem; font-weight: 700; padding: 0.22rem 0.65rem;
+  border-radius: 20px; font-family: 'DM Sans', sans-serif;
+  display: inline-flex; align-items: center; gap: 0.3rem;
+}
+/* Tier: Must Do (core mandatory) */
+.task-points.tier-must {
+  background: rgba(28,85,187,0.12); color: var(--primary);
+  border: 1px solid rgba(28,85,187,0.25);
+}
+/* Tier: Core (main steps) */
+.task-points.tier-core {
+  background: rgba(28,85,187,0.08); color: var(--primary-dark);
+  border: 1px solid rgba(28,85,187,0.18);
+}
+/* Tier: Try It */
+.task-points.tier-try {
+  background: rgba(196,122,0,0.10); color: var(--amber);
+  border: 1px solid rgba(196,122,0,0.22);
+}
+/* Tier: Level Up / Stretch */
+.task-points.tier-stretch {
+  background: rgba(26,122,74,0.10); color: var(--green);
+  border: 1px solid rgba(26,122,74,0.22);
+}
+
+/* XP Legend */
+.xp-legend {
+  display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem;
+  padding: 0.85rem 1.1rem;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow-sm);
+  align-items: center;
+}
+.xp-legend-label { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; margin-right: 0.25rem; }
+.xp-legend-item {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+}
+.xp-legend-item.tier-must   { background: rgba(28,85,187,0.10); color: var(--primary); border: 1px solid rgba(28,85,187,0.2); }
+.xp-legend-item.tier-core   { background: rgba(28,85,187,0.06); color: var(--primary-dark); border: 1px solid rgba(28,85,187,0.15); }
+.xp-legend-item.tier-try    { background: rgba(196,122,0,0.10); color: var(--amber); border: 1px solid rgba(196,122,0,0.2); }
+.xp-legend-item.tier-stretch{ background: rgba(26,122,74,0.10); color: var(--green); border: 1px solid rgba(26,122,74,0.2); }
+.xp-legend-item.tier-free   { background: rgba(107,63,160,0.10); color: var(--purple); border: 1px solid rgba(107,63,160,0.2); }
+
+.task-tier-label {
+  font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em;
+  padding: 0.18rem 0.5rem; border-radius: 4px;
+}
+.tier-must .task-tier-label { background: var(--primary); color: #fff; }
+.tier-core .task-tier-label { background: var(--primary-soft); color: var(--primary); }
+.tier-bonus .task-tier-label { background: var(--orange-soft); color: var(--orange); }
+.tier-free .task-tier-label { background: var(--purple-soft); color: var(--purple); }
+
+.task-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+.task-card.expanded .task-body { max-height: 9999px; }
+.task-body-inner { padding: 1.25rem 1.5rem; border-top: 1px solid var(--border); }
+.task-body-inner h4 { font-size: 0.85rem; color: var(--text); margin: 1.1rem 0 0.5rem; font-family: 'DM Sans', sans-serif; font-weight: 600; }
+.task-body-inner h4:first-child { margin-top: 0; }
+.task-body-inner p { font-size: 0.88rem; color: var(--text2); margin-bottom: 0.6rem; }
+.task-body-inner ul, .task-body-inner ol { padding-left: 1.5rem; margin-bottom: 0.75rem; }
+.task-body-inner li { font-size: 0.88rem; color: var(--text2); padding: 0.15rem 0; }
+.task-body-inner strong { color: var(--text); }
+.task-body-inner a { color: var(--primary); }
+.task-body-inner table { width: 100%; border-collapse: collapse; font-size: 0.84rem; margin: 0.75rem 0; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+.task-body-inner th { padding: 0.5rem 0.75rem; background: var(--surface2); border-bottom: 1px solid var(--border); text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700; }
+.task-body-inner td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border-light); color: var(--text2); }
+.task-body-inner tr:last-child td { border-bottom: none; }
+.task-note {
+  margin-top: 1rem; padding: 0.75rem 1rem;
+  background: rgba(232,88,10,0.07); border-left: 3px solid var(--orange);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 0.84rem; color: var(--text2);
+}
+.task-tip {
+  margin-top: 1rem; padding: 0.75rem 1rem;
+  background: var(--primary-soft); border-left: 3px solid var(--primary);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 0.84rem; color: var(--text2);
+}
+.task-tip strong { color: var(--primary); }
+.task-done-bar { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; }
+
+/* Advanced tabs */
+.adv-tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 1.25rem 0 0; }
+.adv-tab {
+  padding: 0.45rem 1rem; border-radius: var(--radius-sm);
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text-muted); font-size: 0.82rem; font-weight: 600;
+  cursor: pointer; transition: var(--transition);
+}
+.adv-tab.active, .adv-tab:hover { background: var(--primary-soft); border-color: rgba(28,85,187,0.3); color: var(--primary); }
+.adv-panels { margin-top: 0; }
+.adv-panel { display: none; padding: 1rem 0; }
+.adv-panel.active { display: block; }
+.adv-panel h4 { font-size: 0.9rem; color: var(--text); margin-bottom: 0.75rem; font-family: 'DM Sans', sans-serif; }
+.adv-tryit { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); margin-top: 0.75rem; overflow: hidden; }
+.adv-tryit-toggle {
+  display: flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1rem;
+  cursor: pointer; font-size: 0.84rem; font-weight: 600; color: var(--primary);
+}
+.adv-tryit-toggle svg { width: 16px; height: 16px; transition: transform 0.25s; }
+.adv-tryit.open .adv-tryit-toggle svg { transform: rotate(180deg); }
+.adv-tryit-body { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; padding: 0 1rem; }
+.adv-tryit.open .adv-tryit-body { max-height: 1500px; padding: 0 1rem 1rem; }
+
+/* ═══════ LEADERBOARD ═══════ */
+.live-badge {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: rgba(26,122,74,0.10); border: 1px solid rgba(26,122,74,0.25);
+  padding: 0.2rem 0.65rem; border-radius: 20px;
+  font-size: 0.75rem; font-weight: 600; color: var(--green);
+}
+.live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+.leaderboard-wrapper { }
+.leaderboard-refresh-bar { display: flex; gap: 0.75rem; margin-bottom: 1.25rem; }
+.leaderboard-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.leaderboard-table th {
+  padding: 0.6rem 1rem; text-align: left; border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+  font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); font-weight: 700;
+}
+.leaderboard-table tr {
+  border-bottom: 1px solid var(--border-light);
+  animation: rowIn 0.4s ease both;
+  animation-delay: calc(var(--row-index) * 0.04s);
+}
+@keyframes rowIn { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: none; } }
+.leaderboard-row-me { background: var(--primary-soft); }
+.leaderboard-table td { padding: 0.75rem 1rem; color: var(--text2); background: var(--surface); }
+.leaderboard-row-me td { background: rgba(28,85,187,0.05); }
+.rank-badge {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 0.8rem; font-weight: 700;
+  background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border);
+}
+.rank-1 { background: rgba(255,215,0,0.15); color: #c8920a; border-color: rgba(255,215,0,0.4); }
+.rank-2 { background: rgba(150,150,160,0.12); color: #666; border-color: rgba(150,150,160,0.3); }
+.rank-3 { background: rgba(185,120,60,0.12); color: #9a5c20; border-color: rgba(185,120,60,0.3); }
+.leaderboard-name { font-weight: 600; color: var(--text); }
+.leaderboard-you-badge {
+  display: inline-block; padding: 0.1rem 0.45rem; border-radius: 10px;
+  background: var(--primary-soft); color: var(--primary); font-size: 0.72rem; font-weight: 600;
+  margin-left: 0.4rem; vertical-align: middle; border: 1px solid rgba(28,85,187,0.2);
+}
+.leaderboard-points { font-family: 'JetBrains Mono', monospace; color: var(--primary); font-weight: 700; }
+.leaderboard-bar-cell { min-width: 120px; }
+.leaderboard-bar { height: 6px; background: var(--surface3); border-radius: 3px; overflow: hidden; }
+.leaderboard-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-light)); border-radius: 3px; transition: width 0.6s ease; }
+.leaderboard-empty { padding: 3rem 0; text-align: center; color: var(--text-muted); }
+.leaderboard-empty svg { width: 48px; height: 48px; margin-bottom: 1rem; opacity: 0.3; }
+.leaderboard-show-more { text-align: center; padding: 1rem 0; }
+
+/* ═══════ ADMIN ═══════ */
+.admin-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.admin-stat-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1.25rem; box-shadow: var(--shadow-sm);
+}
+.admin-stat-card .label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; }
+.admin-stat-card .value { font-size: 2rem; font-weight: 800; font-family: 'Syne', sans-serif; color: var(--primary); }
+.admin-table-wrap { overflow-x: auto; }
+.admin-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+.admin-table th { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); background: var(--surface2); font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); text-align: left; font-weight: 700; }
+.admin-table td { padding: 0.65rem 0.75rem; border-bottom: 1px solid var(--border-light); color: var(--text2); }
+.admin-table tr:hover td { background: var(--surface2); }
+.admin-controls { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.admin-section-title { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-weight: 700; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+.admin-login-card { max-width: 400px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; box-shadow: var(--shadow-sm); }
+.admin-login-card h2 { margin-bottom: 1.5rem; font-size: 1.1rem; font-family: 'DM Sans', sans-serif; color: var(--text); }
+.steps-control { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+.step-toggle {
+  padding: 0.35rem 0.75rem; border-radius: var(--radius-sm); font-size: 0.78rem; font-weight: 600;
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text2); cursor: pointer; transition: var(--transition);
+}
+.step-toggle.hidden { background: var(--orange-soft); border-color: rgba(232,88,10,0.3); color: var(--orange); }
+
+/* ═══════ CAST MODE ═══════ */
+.cast-exit-btn {
+  display: none; position: fixed; top: 1rem; right: 1rem; z-index: 100;
+  padding: 0.45rem 1rem; border-radius: var(--radius-sm);
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text-muted); font-size: 0.8rem; font-weight: 600; cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+.cast-mode .cast-exit-btn { display: block; }
+.cast-mode .sidebar { display: none; }
+.cast-mode .leaderboard-table { font-size: 1.1rem; }
+.cast-mode .leaderboard-table th { font-size: 0.85rem; padding: 0.75rem 1.25rem; }
+.cast-mode .leaderboard-table td { padding: 1rem 1.25rem; }
+.cast-mode .rank-badge { width: 36px; height: 36px; font-size: 1rem; }
+.cast-mode .page-header h1 { font-size: 2rem; }
+.cast-stats-bar { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.cast-stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.5rem; box-shadow: var(--shadow-sm); }
+.cast-stat-value { font-size: 2.5rem; font-weight: 800; font-family: 'Syne', sans-serif; color: var(--primary); }
+.cast-stat-label { font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.cast-stat-progress { flex: 1; min-width: 200px; }
+.cast-progress-track { height: 8px; background: var(--surface3); border-radius: 4px; overflow: hidden; }
+.cast-progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-light)); border-radius: 4px; }
+
+/* ═══════ TOAST ═══════ */
+.toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 1000; display: flex; flex-direction: column; gap: 0.5rem; }
+.toast {
+  padding: 0.65rem 1.25rem; border-radius: var(--radius-sm);
+  font-size: 0.88rem; font-weight: 600;
+  animation: toastIn 0.3s ease, toastOut 0.3s ease 2.3s both;
+  box-shadow: var(--shadow-md);
+}
+@keyframes toastIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes toastOut { to { opacity: 0; transform: translateY(-4px); } }
+.toast.success { background: var(--primary); color: #fff; }
+.toast.undo { background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); }
+
+/* ═══════ OFFLINE BANNER ═══════ */
+.offline-banner {
+  display: none; position: fixed; top: 0; left: 0; right: 0;
+  background: rgba(232,88,10,0.1); border-bottom: 1px solid rgba(232,88,10,0.3);
+  color: var(--orange); text-align: center; font-size: 0.82rem; padding: 0.4rem; z-index: 200;
+}
+.offline-banner.visible { display: block; }
+
+/* ═══════ LOCKOUT ═══════ */
+.lockout-screen {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh; background: var(--bg);
+}
+.lockout-card {
+  text-align: center; padding: 3rem 2rem; max-width: 400px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-md);
+}
+.lockout-card .emoji { font-size: 3rem; margin-bottom: 1rem; }
+.lockout-card h2 { color: var(--text); margin-bottom: 0.75rem; }
+.lockout-card p { color: var(--text-muted); font-size: 0.88rem; }
+
+/* ═══════ CELEBRATE ═══════ */
+.clawd-celebration {
+  display: none; position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+  z-index: 500; text-align: center; pointer-events: none;
+}
+.clawd-celebration.active { display: block; animation: celebPop 2.5s ease forwards; }
+@keyframes celebPop {
+  0% { opacity: 0; transform: translateX(-50%) scale(0.7); }
+  15% { opacity: 1; transform: translateX(-50%) scale(1.05); }
+  20% { transform: translateX(-50%) scale(1); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-50%) scale(0.9); }
+}
+.clawd-celebration .celebrate-text {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: #fff; padding: 0.6rem 1.5rem; border-radius: 30px;
+  font-weight: 800; font-size: 1.2rem; font-family: 'Syne', sans-serif;
+  box-shadow: 0 4px 20px rgba(28,85,187,0.4);
+}
+
+/* ═══════ LOGIN CONFIRM BANNER ═══════ */
+.login-confirm-banner {
+  margin-top: 1rem; padding: 1rem 1.25rem;
+  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+  border-radius: var(--radius-sm); font-size: 0.88rem; color: rgba(255,255,255,0.85);
+}
+.login-confirm-actions { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
+.login-confirm-actions .btn { width: auto; flex: 1; }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN SCREEN -->
+  <div id="login-screen" class="login-screen">
+    <div class="glow1"></div>
+    <div class="glow2"></div>
+    <div class="login-container">
+      <div class="login-logo">
+        <div class="minfy-badge"><span class="dot"></span> Minfy AI CoE</div>
+        <div class="logo-icon">⚡</div>
+        <h1>Claude Code <span>Workshop</span></h1>
+        <p>Hands-on AI engineering training — build real apps with Claude Code</p>
+      </div>
+
+      <div class="login-card" id="participant-login-card">
+        <h2>Join the Workshop</h2>
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" id="login-name" placeholder="e.g., Arjun Sharma" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label>Workshop Code</label>
+          <input type="text" id="login-workshop" placeholder="Code from your facilitator" autocomplete="off">
+        </div>
+        <div class="login-error" id="login-error"></div>
+        <button class="btn btn-primary" id="login-btn" onclick="App.login()">Enter Workshop</button>
+        <a href="#" id="admin-access-link" class="login-sublink" onclick="App.showAdminLogin(event)">Admin access</a>
+      </div>
+
+      <div class="login-card" id="admin-login-card" style="display:none">
+        <h2>Admin Access</h2>
+        <div class="form-group">
+          <label>Admin Password</label>
+          <input type="password" id="admin-bootstrap-password" placeholder="Enter admin password">
+        </div>
+        <div class="login-error" id="admin-bootstrap-error"></div>
+        <button class="btn btn-primary" onclick="App.adminLogin()">Authenticate</button>
+        <a href="#" class="login-sublink" onclick="App.showParticipantLogin(event)">← Back to participant login</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- APP SHELL -->
+  <div id="app-shell" class="app-shell">
+    <button class="mobile-menu-btn" id="mobile-menu-btn">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/></svg>
+    </button>
+    <div class="mobile-overlay" id="mobile-overlay" onclick="App.closeMobileMenu()"></div>
+
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-brand">
+          <div class="sidebar-logo">⚡</div>
+          <div class="sidebar-brand-text">
+            <h2>Claude Code</h2>
+            <span>Minfy AI CoE Workshop</span>
+          </div>
+        </div>
+        <div class="workshop-badge" id="workshop-badge"></div>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-view="workshop" onclick="App.navigate('workshop')">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h14M3 8h14M3 12h9M3 16h6"/></svg>
+          Workshop
+        </button>
+        <button class="nav-item" data-view="leaderboard" onclick="App.navigate('leaderboard')">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15V9M8 15V5M12 15V9M16 15V7"/></svg>
+          Leaderboard
+        </button>
+        <div class="nav-divider"></div>
+        <button class="nav-item" data-view="admin" onclick="App.navigate('admin')">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="7" r="3"/><path d="M4 17c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>
+          Admin
+        </button>
+        <div class="nav-divider"></div>
+        <button class="nav-item" data-view="cheatsheet" onclick="App.navigate('cheatsheet')">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h12v12H4z"/><path d="M8 4v12"/><path d="M12 4v12"/></svg>
+          Cheat Sheet
+        </button>
+        <div class="nav-divider"></div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar" id="user-avatar"></div>
+          <div class="user-details">
+            <div class="name" id="user-name-display"></div>
+            <div class="points" id="user-points-display">0 XP</div>
+          </div>
+          <button class="logout-btn" onclick="App.logout()" title="Log out">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M7 17H4a1 1 0 01-1-1V4a1 1 0 011-1h3M14 14l4-4-4-4M18 10H7"/></svg>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <button class="cast-exit-btn" onclick="App.toggleCastMode()">Exit Cast Mode</button>
+    <main class="main-content" id="main-content"></main>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+  <div class="offline-banner" id="offline-banner"></div>
+  <div class="clawd-celebration" id="clawd-celebration">
+    <div class="celebrate-text">⚡ Step Complete!</div>
+  </div>
+
+<script>
+// ═══════════════════════════════════════════
+//   TASKS DATA — partner-labs-apac content
+// ═══════════════════════════════════════════
+const TASKS = [
+  {
+    id: "step-0",
+    title: "Step 0: Build Your App with Claude Code",
+    subtitle: "Launch Claude Code and generate a complete inventory app from a single prompt — zero dependencies required",
+    category: "core", points: 20, tier: "must",
+    tierLabel: "🔴 Must Do", tierDesc: "20 XP — Foundation step",
+    content: `
+      <p>In this step, you'll have Claude Code build an entire inventory management application from scratch using a single prompt. The app uses <strong>zero external dependencies</strong> — just HTML, CSS, vanilla JavaScript, and a tiny Node.js file server.</p>
+      <h4>1. Create a fresh directory and launch Claude Code</h4>
+      <pre><code>mkdir inventory-app && cd inventory-app && claude</code></pre>
+      <h4>2. Paste the app-generation prompt</h4>
+      <p>Copy and paste this entire prompt into Claude Code:</p>
+      <pre><code>Build a complete inventory management dashboard app with ZERO external dependencies. Use only HTML, CSS, vanilla JavaScript, and Node.js standard library.
+
+FILE STRUCTURE (use these exact names):
+  server.js           - Static file server using only Node http and fs modules (CommonJS require, NOT ESM). Port 3000.
+  index.html          - Dashboard page (app entry point)
+  inventory.html      - Inventory list page
+  orders.html         - Orders page
+  reports.html        - Reports page
+  css/styles.css      - All styles
+  js/app.js           - Shared navigation and utility functions
+  js/dashboard.js     - Dashboard page logic
+  js/inventory.js     - Inventory page logic
+  js/orders.js        - Orders page logic
+  js/reports.js       - Reports page logic
+  data/products.json  - Product catalog (18-20 items)
+  data/orders.json    - Order records (25-30 orders)
+
+DO NOT create package.json or use npm/CDN/external libraries.
+
+DATA MODEL:
+- products.json fields: id, name, sku, category, price, stock, warehouse, reorderLevel
+  Categories: Electronics, Furniture, Office Supplies, Packaging
+  Warehouses: San Francisco, Tokyo, London
+- orders.json fields: id, customerName, productId, productName, quantity, status, orderDate, total
+  Statuses: Pending, Shipped, Delivered, Cancelled
+  Dates: spread across Jan-Dec 2025
+
+PAGES:
+- Dashboard (index.html): KPI cards (total products, total orders, total revenue, low stock count), orders-by-status summary, recent orders table (last 10)
+- Inventory (inventory.html): Full product table with search box and category filter dropdown. Highlight rows where stock is below reorderLevel in red/warning style.
+- Orders (orders.html): Order table with clickable status filter buttons (All, Pending, Shipped, Delivered, Cancelled). Show active filter state.
+- Reports (reports.html): Monthly order summary table, top 5 products by revenue, total stats.
+
+NAVIGATION: Consistent top nav or sidebar on every page with links to all 4 pages. Highlight active page.
+
+STYLE: Professional SaaS look — clean layout, neutral grays with blue accent color, card-based sections, subtle shadows, sans-serif font.
+
+SERVER: server.js must use CommonJS (require), serve static files with correct MIME types for .html/.css/.js/.json/.png, and default to index.html for root path.
+
+IMPORTANT - PLANT THESE EXACT BUGS IN THE REPORTS PAGE:
+1. In reports.js, add a console.log("reports debug: rendering") that fires inside any function that renders or updates the page, so it spams the console on every interaction
+2. Add filter controls (e.g. a year or status dropdown) to the reports page, but make the event handler function empty — the filters should appear but do nothing when changed
+3. In the summary statistics section, calculate "Average Order Value" by dividing total revenue by the number of PRODUCTS instead of the number of ORDERS — this will produce an incorrect value
+
+After building all files, automatically start the server with node server.js and open http://localhost:3000 in the default browser.</code></pre>
+      <div class="task-note">The app intentionally has some bugs planted in the Reports page — you'll find and fix them in a later challenge step.</div>
+    `
+  },
+  {
+    id: "step-2",
+    title: "Step 1: Launch Claude Code",
+    subtitle: "Starting Claude Code, selecting a model, generating CLAUDE.md",
+    category: "core", points: 10, tier: "must",
+    tierLabel: "🔴 Must Do", tierDesc: "10 XP — Foundation step",
+    content: `
+      <p>Open your terminal inside the project directory and start Claude Code:</p>
+      <pre><code>claude</code></pre>
+      <p>Once Claude Code is running, select your preferred model:</p>
+      <pre><code>/model</code></pre>
+      <p>Choose a model from the list. For this workshop, any model works well.</p>
+      <p>Next, generate a CLAUDE.md file for the project:</p>
+      <pre><code>/init</code></pre>
+      <p>The <code>/init</code> command scans the codebase and generates a <code>CLAUDE.md</code> file with project context — technology stack, key commands, architecture notes, and conventions. This helps Claude Code give better answers throughout your session.</p>
+    `
+  },
+  {
+    id: "step-4",
+    title: "Step 2: Edit the CLAUDE.md File",
+    subtitle: "@-file mentions, memory systems, persistent project context",
+    category: "core", points: 15, tier: "core",
+    tierLabel: "🔵 Core Skill", tierDesc: "15 XP — Core skill",
+    content: `
+      <p>The project should have a <code>CLAUDE.md</code> file that gives Claude persistent instructions about the project — coding conventions, system architecture, technology stacks and rules to follow.</p>
+      <div class="task-tip">If you're starting a fresh project without a CLAUDE.md, run <code>/init</code> to generate one automatically.</div>
+      <h4>Using @-file mentions</h4>
+      <p>You can reference any file in your prompts using <code>@</code>. Try it:</p>
+      <pre><code>Print out exactly what is in @CLAUDE.md</code></pre>
+      <p>Claude reads the file and prints its contents. The <code>@</code> syntax works for any file in your project.</p>
+      <h4>Two ways to edit the CLAUDE.md file</h4>
+      <p><strong>Method 1 — Prompt Claude to edit it</strong></p>
+      <pre><code>Edit my CLAUDE.md file to add "Always document non-obvious logic changes with comments"</code></pre>
+      <p>Claude opens the file, adds the instruction, and saves it.</p>
+      <p><strong>Method 2 — Edit directly</strong></p>
+      <p>Open <code>CLAUDE.md</code> in your text editor (VS Code or vim) and make changes.</p>
+      <h4>Persistent memory systems</h4>
+      <p>Claude has 2 persistent memory systems — ultimately the record ends up in <code>./.claude/CLAUDE.md</code> (personal):</p>
+      <p><code>/CLAUDE.md</code> markdown files with persistent instructions that load automatically:</p>
+      <table>
+        <thead><tr><th>File</th><th>Scope</th></tr></thead>
+        <tbody>
+          <tr><td><code>./CLAUDE.md</code></td><td>Project (shared via git)</td></tr>
+          <tr><td><code>./.claude/rules/*.md</code></td><td>Topic-specific rules</td></tr>
+          <tr><td><code>./.claude/CLAUDE.md</code></td><td>Personal, all projects</td></tr>
+          <tr><td><code>./CLAUDE.local.md</code></td><td>Personal, this project only</td></tr>
+        </tbody>
+      </table>
+      <p><code>/memory</code> command writes to your personal <code>./.claude/CLAUDE.md</code> and is faster for capturing preferences on the fly.</p>
+    `
+  },
+  {
+    id: "step-5",
+    title: "Step 3: Explore the Codebase",
+    subtitle: "Using Claude Code to understand and visualize a codebase",
+    category: "core", points: 20, tier: "core",
+    tierLabel: "🔵 Core Skill", tierDesc: "20 XP — Core skill",
+    content: `
+      <p>Ask Claude to investigate the project and generate an architecture overview:</p>
+      <pre><code>I want to understand this codebase. Investigate the project and create a simple, professional HTML-based architecture page showing the system architecture, tech stack, and data flow. Then open the file in a browser window.</code></pre>
+      <p>Claude will:</p>
+      <ul>
+        <li>Explore the directory structure</li>
+        <li>Read key files to understand the architecture</li>
+        <li>Generate an HTML page with a visual diagram showing the HTML/CSS/JS frontend, static JSON data layer, and Node.js file server</li>
+        <li>Open the file in your browser</li>
+      </ul>
+      <p>This demonstrates how Claude Code can quickly onboard you to an unfamiliar codebase.</p>
+    `
+  },
+  {
+    id: "step-6",
+    title: "Step 4: Build a Feature",
+    subtitle: "Plan Mode (Shift+Tab), iterative development, interactive feedback",
+    category: "core", points: 40, tier: "core",
+    tierLabel: "🔵 Core Skill", tierDesc: "40 XP — Core skill",
+    content: `
+      <p>This is the core of the workshop. You'll use Plan Mode to have Claude design a feature before implementing it, then iterate on the result.</p>
+      <h4>Enter Plan Mode</h4>
+      <p>Press <strong>Shift+Tab</strong> to switch Claude into Plan Mode. In Plan Mode, Claude proposes a plan and waits for your approval before writing any code.</p>
+      <p>Choose one of the two feature options below.</p>
+      <h4>Option A: Budget-Based Restocking Tool</h4>
+      <p>Build a new page that recommends which items to restock based on a budget, using inventory and order data.</p>
+      <p>Paste this prompt:</p>
+      <pre><code>Build a new "Restocking" page (restocking.html) in the app. It should have:
+1. A budget slider that lets the user set their available budget
+2. Based on the budget, recommend items from inventory that are below their reorder level
+3. Prioritize items by how far below reorder level they are
+4. A "Place Order" button that submits the restocking order
+5. The submitted order should appear in the existing Orders page with a "Restocking" status
+
+Add it to the navigation alongside the existing pages.
+
+Use the AskUserQuestion tool!</code></pre>
+      <p>Claude will present a plan. Review it — when it looks good, accept the plan and let Claude implement it.</p>
+      <div class="task-note">Claude may ask you clarifying questions using the AskUserQuestion tool (e.g., "Should the budget slider range from $0-$50,000 or should I determine the range from the data?"). Answer these as they come up.</div>
+      <p>Test the feature in your browser once Claude finishes. Then iterate: choose what you'd like to work on next.</p>
+      <div class="task-tip"><strong>Pro Tip:</strong> Claude is an intelligent thought partner
+        <ul style="margin:0.5rem 0 0 1.25rem;list-style:disc">
+          <li>Can help plan, discover, ideate and design across the SDLC</li>
+          <li>Can help identify biases, identify gaps and support critical thinking</li>
+          <li>Can review, document, architect and draft visual diagrams</li>
+          <li>Can check screenshots by pasting them into the conversation (ctrl + v)</li>
+        </ul>
+      </div>
+      <h4>Option B: SaaS-Style UI Redesign</h4>
+      <p>Transform the app's interface into a polished, modern SaaS-style design using a reusable Claude Code skill.</p>
+      <p><strong>Part 1 — Create the skill</strong></p>
+      <pre><code>I want to build a skill that redesigns an application's UI into a modern SaaS-style interface with a vertical navigation sidebar on the left instead of a top nav bar, consistent spacing, and a polished professional look.</code></pre>
+      <p>Claude will ask follow-up questions to build the skill. Answer them to shape the skill's behavior.</p>
+      <p><strong>Part 2 — Apply the skill</strong></p>
+      <pre><code>Use the frontend-design skill to redesign this inventory management app into a modern SaaS-style interface with:
+1. Vertical navigation bar on the left side instead of the top
+2. Clean, modern card layouts
+3. Professional SaaS aesthetic
+
+Use the AskUserQuestion tool!</code></pre>
+      <p>Claude presents a plan. Accept it and let the implementation run. Then iterate:</p>
+      <pre><code>Add a collapsible sidebar with icons-only mode for smaller screens.</code></pre>
+      <div class="task-tip">When Claude's plan looks good, accept it and wait for the implementation to complete. Then test the changes in your browser at <a href="http://localhost:3000" target="_blank">http://localhost:3000</a>.</div>
+    `
+  },
+  {
+    id: "step-7",
+    title: "Step 5: Context Management",
+    subtitle: "Managing the context window during long agentic sessions",
+    category: "core", points: 15, tier: "core",
+    tierLabel: "🔵 Core Skill", tierDesc: "15 XP — Core skill",
+    content: `
+      <p>After building a feature, your context window may be filling up. Claude Code provides tools to manage this.</p>
+      <h4>Check context usage:</h4>
+      <pre><code>/context</code></pre>
+      <p>This shows a breakdown of how much context is being used by your conversation, files, and tools.</p>
+      <h4>Compact the context:</h4>
+      <pre><code>/compact</code></pre>
+      <p>This summarizes the conversation so far and clears older context, freeing up space for new work. Claude retains the key information.</p>
+      <p>You can also pass an instruction to <code>/compact</code> to tell Claude what to prioritize when summarizing:</p>
+      <pre><code>/compact keep the details of the restocking feature</code></pre>
+      <p>This ensures important context (like a feature you're actively building) survives the compaction.</p>
+    `
+  },
+  {
+    id: "step-8",
+    title: "Step 6: Add Playwright MCP",
+    subtitle: "Model Context Protocol — extending Claude with browser automation",
+    category: "core", points: 15, tier: "try",
+    tierLabel: "🟡 Try It", tierDesc: "15 XP — Hands-on exploration",
+    content: `
+      <p>MCP servers give Claude the ability to connect to external tools — things like browser automation, database access, or API integrations. Think of them as a connector protocol that extends what Claude can do beyond operating within the confines of your local machine. (<a href="https://code.claude.com/docs/en/mcp" target="_blank">Learn more about MCP</a>)</p>
+      <p>In your terminal, run:</p>
+      <pre><code>claude mcp add playwright npx @playwright/mcp@latest</code></pre>
+      <p>This installs the Playwright MCP server, which gives Claude the ability to control a browser.</p>
+    `
+  },
+  {
+    id: "step-9",
+    title: "Step 7: Use Playwright MCP to Test",
+    subtitle: "Context budget awareness, browser testing via MCP",
+    category: "core", points: 20, tier: "try",
+    tierLabel: "🟡 Try It", tierDesc: "20 XP — Hands-on exploration",
+    content: `
+      <p>Restart Claude Code to pick up the MCP configuration:</p>
+      <pre><code>/exit
+
+claude</code></pre>
+      <p>Now check the context impact:</p>
+      <pre><code>/context</code></pre>
+      <p>Notice how MCP servers consume some context budget for their tool definitions. This is a useful thing to be aware of when working with multiple MCP servers.</p>
+      <div class="task-note">This repo already has Playwright configured in <code>.mcp.json</code>, but we teach the install process here so you know how to add MCP servers to your own projects.</div>
+      <p>Verify the MCP server is loaded:</p>
+      <pre><code>/mcp</code></pre>
+      <p>You should see <code>playwright</code> listed.</p>
+      <p>Now use Playwright to test the app by pasting this into Claude Code:</p>
+      <pre><code>Use Playwright MCP to test the app:
+1. Start the development servers
+2. Navigate to localhost:3000
+3. Take a screenshot of the dashboard
+4. Click through the main navigation tabs and verify each page loads</code></pre>
+      <p>Claude will launch a browser, navigate through the app, take screenshots, and report what it finds.</p>
+      <div class="task-tip"><strong>Pro Tip:</strong> Claude is an amazing teacher and can help troubleshoot most technical roadblocks
+        <ul style="margin:0.5rem 0 0 1.25rem;list-style:disc">
+          <li>Install, manage and handle package dependencies</li>
+          <li>Troubleshoot errors and debug applications</li>
+          <li>Run bash commands &amp; git for source control and integrate with your CI/CD</li>
+        </ul>
+      </div>
+    `
+  },
+  {
+    id: "step-11",
+    title: "Step 8: Advanced Workflows",
+    subtitle: "Skills, subagents, hooks, plugins, agent teams, and worktrees",
+    category: "core", points: 25, tier: "stretch",
+    tierLabel: "🟢 Level Up", tierDesc: "25 XP — Advanced mastery",
+    content: `
+      <p>The steps above cover the core tutorial. Below are five powerful Claude Code features you can explore in the remaining time. Click a tab to learn more and try each one.</p>
+      <div class="adv-tabs">
+        <button class="adv-tab active" onclick="(function(btn){btn.parentElement.querySelectorAll('.adv-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');btn.closest('.adv-tabs').nextElementSibling.querySelectorAll('.adv-panel').forEach(p=>p.classList.remove('active'));btn.closest('.adv-tabs').nextElementSibling.querySelector('[data-tab=&quot;'+btn.dataset.tab+'&quot;]').classList.add('active')})(this)" data-tab="skills">Skills</button>
+        <button class="adv-tab" onclick="(function(btn){btn.parentElement.querySelectorAll('.adv-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');btn.closest('.adv-tabs').nextElementSibling.querySelectorAll('.adv-panel').forEach(p=>p.classList.remove('active'));btn.closest('.adv-tabs').nextElementSibling.querySelector('[data-tab=&quot;'+btn.dataset.tab+'&quot;]').classList.add('active')})(this)" data-tab="subagents">Subagents</button>
+        <button class="adv-tab" onclick="(function(btn){btn.parentElement.querySelectorAll('.adv-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');btn.closest('.adv-tabs').nextElementSibling.querySelectorAll('.adv-panel').forEach(p=>p.classList.remove('active'));btn.closest('.adv-tabs').nextElementSibling.querySelector('[data-tab=&quot;'+btn.dataset.tab+'&quot;]').classList.add('active')})(this)" data-tab="hooks">Hooks</button>
+        <button class="adv-tab" onclick="(function(btn){btn.parentElement.querySelectorAll('.adv-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');btn.closest('.adv-tabs').nextElementSibling.querySelectorAll('.adv-panel').forEach(p=>p.classList.remove('active'));btn.closest('.adv-tabs').nextElementSibling.querySelector('[data-tab=&quot;'+btn.dataset.tab+'&quot;]').classList.add('active')})(this)" data-tab="plugins">Plugins</button>
+        <button class="adv-tab" onclick="(function(btn){btn.parentElement.querySelectorAll('.adv-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');btn.closest('.adv-tabs').nextElementSibling.querySelectorAll('.adv-panel').forEach(p=>p.classList.remove('active'));btn.closest('.adv-tabs').nextElementSibling.querySelector('[data-tab=&quot;'+btn.dataset.tab+'&quot;]').classList.add('active')})(this)" data-tab="agent-teams">Agent Teams</button>
+        <button class="adv-tab" onclick="(function(btn){btn.parentElement.querySelectorAll('.adv-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');btn.closest('.adv-tabs').nextElementSibling.querySelectorAll('.adv-panel').forEach(p=>p.classList.remove('active'));btn.closest('.adv-tabs').nextElementSibling.querySelector('[data-tab=&quot;'+btn.dataset.tab+'&quot;]').classList.add('active')})(this)" data-tab="worktrees">Worktrees</button>
+      </div>
+      <div class="adv-panels">
+        <div class="adv-panel active" data-tab="skills">
+          <h4>Skills — Reusable instruction sets</h4>
+          <p>Skills are reusable instruction sets that teach Claude specialized tasks — like playbooks for specific domains.</p>
+          <p><strong>When to use:</strong></p>
+          <ul><li>Standardizing team workflows</li><li>Creating repeatable processes</li><li>Domain-specific code generation</li></ul>
+          <div class="adv-tryit">
+            <div class="adv-tryit-toggle" onclick="this.parentElement.classList.toggle('open')">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 10 13 14 9"/></svg>Try it
+            </div>
+            <div class="adv-tryit-body">
+              <p>Create a Vue component analysis skill:</p>
+              <pre><code>I want to build a skill that analyzes Vue component structure and suggests optimizations for performance and code reuse</code></pre>
+              <p>Answer Claude's follow-up questions to define the skill's scope and behavior. Claude will build and test the skill for you.</p>
+            </div>
+          </div>
+          <p style="margin-top:0.75rem;font-size:0.85rem"><a href="https://docs.anthropic.com/en/docs/claude-code/skills" target="_blank">Skills documentation →</a></p>
+        </div>
+        <div class="adv-panel" data-tab="subagents">
+          <h4>Subagents — Specialized Claude agents</h4>
+          <p>Specialized Claude agents scoped to specific tasks. Delegate complex subtasks to focused specialists.</p>
+          <p><strong>When to use:</strong></p>
+          <ul><li>Code review and security auditing</li><li>Debugging and domain-specific analysis</li><li>Any task that benefits from a focused agent</li></ul>
+          <div class="adv-tryit">
+            <div class="adv-tryit-toggle" onclick="this.parentElement.classList.toggle('open')">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 10 13 14 9"/></svg>Try it
+            </div>
+            <div class="adv-tryit-body">
+              <p>Create a Debugger subagent:</p>
+              <pre><code>Create a new Debugger subagent that specializes in investigating runtime errors, reading stack traces, and suggesting fixes. It should have access to Read, Grep, Glob, and Bash tools.</code></pre>
+              <p>Then test it:</p>
+              <pre><code>Use the debugger agent to investigate any console errors on the Dashboard page.</code></pre>
+            </div>
+          </div>
+          <p style="margin-top:0.75rem;font-size:0.85rem"><a href="https://docs.anthropic.com/en/docs/claude-code/sub-agents" target="_blank">Subagents documentation →</a></p>
+        </div>
+        <div class="adv-panel" data-tab="hooks">
+          <h4>Hooks — Automated event responses</h4>
+          <p>Shell commands that run automatically in response to Claude Code events (file edits, tool calls, etc.).</p>
+          <p><strong>When to use:</strong></p>
+          <ul><li>Auto-formatting on save</li><li>Logging tool usage</li><li>Enforcing code standards and pre-commit checks</li></ul>
+          <div class="adv-tryit">
+            <div class="adv-tryit-toggle" onclick="this.parentElement.classList.toggle('open')">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 10 13 14 9"/></svg>Try it
+            </div>
+            <div class="adv-tryit-body">
+              <p>Install Prettier and add a formatting hook:</p>
+              <pre><code>npm install --save-dev prettier</code></pre>
+              <p>Configure the hook using <code>/hooks</code> or add it manually to <code>~/.claude/settings.json</code>:</p>
+              <pre><code>{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx prettier --write \\"$CLAUDE_FILE_PATH\\" 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+  }
+}</code></pre>
+              <p>Test it:</p>
+              <pre><code>Add an extra function to api.js with deliberately messy formatting</code></pre>
+              <p>The hook should automatically clean it up after Claude writes the file.</p>
+            </div>
+          </div>
+          <p style="margin-top:0.75rem;font-size:0.85rem"><a href="https://docs.anthropic.com/en/docs/claude-code/hooks" target="_blank">Hooks documentation →</a></p>
+        </div>
+        <div class="adv-panel" data-tab="plugins">
+          <h4>Plugins — Community-built workflow packages</h4>
+          <p>Community-built packages that bundle slash commands, skills, and conventions into installable workflows.</p>
+          <p><strong>When to use:</strong></p>
+          <ul><li>Adopting team/org-wide workflows</li><li>Standardizing CI/CD patterns</li><li>Adding domain-specific commands</li></ul>
+          <div class="adv-tryit">
+            <div class="adv-tryit-toggle" onclick="this.parentElement.classList.toggle('open')">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 10 13 14 9"/></svg>Try it
+            </div>
+            <div class="adv-tryit-body">
+              <p>Browse and add a plugin from the marketplace:</p>
+              <pre><code>/plugin marketplace add https://github.com/aws-solutions-library-samples/guidance-for-claude-code-with-amazon-bedrock</code></pre>
+              <p>Install a specific workflow:</p>
+              <pre><code>/plugin install epcc-workflow</code></pre>
+              <p>Use the plugin's workflow:</p>
+              <pre><code>/epcc-code Add a CSV export button to the inventory page</code></pre>
+            </div>
+          </div>
+          <p style="margin-top:0.75rem;font-size:0.85rem"><a href="https://docs.anthropic.com/en/docs/claude-code/plugins" target="_blank">Plugins documentation →</a></p>
+        </div>
+        <div class="adv-panel" data-tab="agent-teams">
+          <h4>Agent Teams — Coordinated multi-agent workflows</h4>
+          <p>Coordinate multiple Claude Code instances working together as a team. Unlike subagents which report back to one parent, teammates share a task list, investigate independently, and message each other directly.</p>
+
+          <svg viewBox="0 0 880 500" width="100%" style="max-width:880px;display:block;margin:1rem auto 1.25rem;font-family:inherit" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrD" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="#555"/>
+              </marker>
+              <marker id="arrGD" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="#888"/>
+              </marker>
+            </defs>
+            <!-- LEFT PANEL -->
+            <rect x="10" y="10" width="415" height="480" rx="12" fill="#f0f0f0" stroke="#d0d0d0"/>
+            <text x="217" y="42" text-anchor="middle" font-weight="bold" font-size="15" fill="#333">Subagents</text>
+            <rect x="62" y="55" width="310" height="44" rx="8" fill="#FFB3B3" stroke="#e08080"/>
+            <text x="217" y="82" text-anchor="middle" font-size="13" fill="#333">Main Agent</text>
+            <line x1="120" y1="99" x2="90" y2="168" stroke="#555" stroke-width="1.5" marker-end="url(#arrD)"/>
+            <text x="70" y="122" text-anchor="middle" font-size="10" fill="#555">Spawn</text>
+            <text x="70" y="134" text-anchor="middle" font-size="10" fill="#555">Subagent</text>
+            <line x1="217" y1="99" x2="217" y2="168" stroke="#555" stroke-width="1.5" marker-end="url(#arrD)"/>
+            <text x="222" y="122" font-size="10" fill="#555">Spawn</text>
+            <text x="222" y="134" font-size="10" fill="#555">Subagent</text>
+            <line x1="314" y1="99" x2="344" y2="168" stroke="#555" stroke-width="1.5" marker-end="url(#arrD)"/>
+            <text x="323" y="122" font-size="10" fill="#555">Spawn</text>
+            <text x="323" y="134" font-size="10" fill="#555">Subagent</text>
+            <rect x="40" y="168" width="100" height="38" rx="8" fill="#FFD580" stroke="#c8a040"/>
+            <text x="90" y="192" text-anchor="middle" font-size="12" fill="#333">Subagent</text>
+            <rect x="167" y="168" width="100" height="38" rx="8" fill="#FFD580" stroke="#c8a040"/>
+            <text x="217" y="192" text-anchor="middle" font-size="12" fill="#333">Subagent</text>
+            <rect x="294" y="168" width="100" height="38" rx="8" fill="#FFD580" stroke="#c8a040"/>
+            <text x="344" y="192" text-anchor="middle" font-size="12" fill="#333">Subagent</text>
+            <line x1="90" y1="206" x2="90" y2="256" stroke="#555" stroke-width="1.5" marker-end="url(#arrD)"/>
+            <text x="96" y="237" font-size="10" fill="#555">Work</text>
+            <line x1="217" y1="206" x2="217" y2="256" stroke="#555" stroke-width="1.5" marker-end="url(#arrD)"/>
+            <text x="223" y="237" font-size="10" fill="#555">Work</text>
+            <line x1="344" y1="206" x2="344" y2="256" stroke="#555" stroke-width="1.5" marker-end="url(#arrD)"/>
+            <text x="350" y="237" font-size="10" fill="#555">Work</text>
+            <circle cx="90" cy="278" r="22" fill="none" stroke="#888" stroke-dasharray="5,3"/>
+            <text x="90" y="282" text-anchor="middle" font-size="10" fill="#555">Result</text>
+            <circle cx="217" cy="278" r="22" fill="none" stroke="#888" stroke-dasharray="5,3"/>
+            <text x="217" y="282" text-anchor="middle" font-size="10" fill="#555">Result</text>
+            <circle cx="344" cy="278" r="22" fill="none" stroke="#888" stroke-dasharray="5,3"/>
+            <text x="344" y="282" text-anchor="middle" font-size="10" fill="#555">Result</text>
+            <line x1="90" y1="300" x2="90" y2="355" stroke="#888" stroke-width="1.2" stroke-dasharray="4,3"/>
+            <line x1="217" y1="300" x2="217" y2="355" stroke="#888" stroke-width="1.2" stroke-dasharray="4,3"/>
+            <line x1="344" y1="300" x2="344" y2="355" stroke="#888" stroke-width="1.2" stroke-dasharray="4,3"/>
+            <path d="M344,355 L28,355 L28,77 L62,77" fill="none" stroke="#888" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arrGD)"/>
+            <text x="90" y="378" text-anchor="middle" font-size="10" fill="#777">Report</text>
+            <text x="217" y="378" text-anchor="middle" font-size="10" fill="#777">Report</text>
+            <text x="344" y="378" text-anchor="middle" font-size="10" fill="#777">Report</text>
+            <!-- RIGHT PANEL -->
+            <rect x="445" y="10" width="425" height="480" rx="12" fill="#f0f0f0" stroke="#d0d0d0"/>
+            <text x="657" y="42" text-anchor="middle" font-weight="bold" font-size="15" fill="#333">Agent Teams</text>
+            <rect x="497" y="55" width="320" height="44" rx="8" fill="#FFB3B3" stroke="#e08080"/>
+            <text x="657" y="82" text-anchor="middle" font-size="12" fill="#333">Main Agent (Team Lead)</text>
+            <line x1="657" y1="99" x2="657" y2="153" stroke="#555" stroke-width="1.5" marker-end="url(#arrD)"/>
+            <text x="663" y="119" font-size="10" fill="#555">Spawn Team &amp;</text>
+            <text x="663" y="131" font-size="10" fill="#555">Assign Tasks</text>
+            <rect x="497" y="153" width="320" height="40" rx="8" fill="#C5D9F1" stroke="#7aabda" stroke-dasharray="6,3"/>
+            <text x="657" y="178" text-anchor="middle" font-size="12" fill="#333">Shared Task List</text>
+            <line x1="511" y1="262" x2="527" y2="193" stroke="#555" stroke-width="1.5" marker-end="url(#arrD)"/>
+            <text x="506" y="228" text-anchor="end" font-size="10" fill="#555">Claim</text>
+            <line x1="657" y1="262" x2="657" y2="193" stroke="#555" stroke-width="1.5" marker-end="url(#arrD)"/>
+            <text x="663" y="228" font-size="10" fill="#555">Claim</text>
+            <line x1="803" y1="262" x2="787" y2="193" stroke="#555" stroke-width="1.5" marker-end="url(#arrD)"/>
+            <text x="808" y="228" font-size="10" fill="#555">Claim</text>
+            <rect x="461" y="262" width="100" height="38" rx="8" fill="#B3A3E8" stroke="#8070cc"/>
+            <text x="511" y="286" text-anchor="middle" font-size="12" fill="#333">Teammate</text>
+            <rect x="607" y="262" width="100" height="38" rx="8" fill="#B3A3E8" stroke="#8070cc"/>
+            <text x="657" y="286" text-anchor="middle" font-size="12" fill="#333">Teammate</text>
+            <rect x="753" y="262" width="100" height="38" rx="8" fill="#B3A3E8" stroke="#8070cc"/>
+            <text x="803" y="286" text-anchor="middle" font-size="12" fill="#333">Teammate</text>
+            <line x1="561" y1="281" x2="607" y2="281" stroke="#555" stroke-width="1.2" marker-end="url(#arrD)"/>
+            <text x="584" y="276" text-anchor="middle" font-size="9" fill="#555">Communicate</text>
+            <line x1="707" y1="281" x2="753" y2="281" stroke="#555" stroke-width="1.2" marker-end="url(#arrD)"/>
+            <text x="730" y="276" text-anchor="middle" font-size="9" fill="#555">Communicate</text>
+            <path d="M461,300 Q461,345 511,345 Q561,345 561,300" fill="none" stroke="#555" stroke-width="1.2" marker-end="url(#arrD)"/>
+            <text x="511" y="365" text-anchor="middle" font-size="10" fill="#555">Work</text>
+            <path d="M607,300 Q607,345 657,345 Q707,345 707,300" fill="none" stroke="#555" stroke-width="1.2" marker-end="url(#arrD)"/>
+            <text x="657" y="365" text-anchor="middle" font-size="10" fill="#555">Work</text>
+            <path d="M753,300 Q753,345 803,345 Q853,345 853,300" fill="none" stroke="#555" stroke-width="1.2" marker-end="url(#arrD)"/>
+            <text x="803" y="365" text-anchor="middle" font-size="10" fill="#555">Work</text>
+          </svg>
+          <p><strong>When to use:</strong></p>
+          <ul><li>Research and review from multiple perspectives simultaneously</li><li>Debugging with competing hypotheses that agents debate</li><li>Cross-layer work (frontend, backend, tests) each owned by a different teammate</li></ul>
+          <div class="adv-tryit">
+            <div class="adv-tryit-toggle" onclick="this.parentElement.classList.toggle('open')">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 10 13 14 9"/></svg>Try it
+            </div>
+            <div class="adv-tryit-body">
+              <p>First, enable agent teams (experimental feature). Paste into Claude Code:</p>
+              <pre><code>/config</code></pre>
+              <p>Select <strong>Edit settings</strong> and add the experimental flag:</p>
+              <pre><code>{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  }
+}</code></pre>
+              <p>Then restart Claude Code and try this:</p>
+              <pre><code>Create an agent team with 3 teammates to audit this inventory management app from different angles:
+- Security Auditor: find vulnerabilities (injection, auth issues, data exposure)
+- Performance Analyst: find bottlenecks (slow queries, unnecessary re-renders, large payloads)
+- UX Reviewer: find usability issues (accessibility, responsive design, error handling)
+
+Have them investigate in parallel, share findings with each other, and challenge each other's severity ratings. Produce a single prioritized action plan at the end.</code></pre>
+              <p>Watch the teammates coordinate — use <strong>Shift+Down</strong> to cycle between agents and see their individual progress.</p>
+            </div>
+          </div>
+          <p style="margin-top:0.75rem;font-size:0.85rem"><a href="https://code.claude.com/docs/en/agent-teams" target="_blank">Agent Teams documentation →</a></p>
+        </div>
+        <div class="adv-panel" data-tab="worktrees">
+          <h4>Worktrees — Isolated parallel branches</h4>
+          <p>Isolated git branches that let Claude work on a separate copy of your repo without touching your current work.</p>
+          <p><strong>When to use:</strong></p>
+          <ul><li>Parallel feature development</li><li>Exploratory changes you might discard</li><li>Running experiments while keeping main work clean</li></ul>
+          <div class="adv-tryit">
+            <div class="adv-tryit-toggle" onclick="this.parentElement.classList.toggle('open')">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 10 13 14 9"/></svg>Try it
+            </div>
+            <div class="adv-tryit-body">
+              <pre><code>Use a worktree to prototype a dark mode toggle for the app without affecting my current branch. Create the feature, test it, and show me the result.</code></pre>
+              <p>Claude will create an isolated copy of the repo, make changes there, and leave your working branch untouched.</p>
+            </div>
+          </div>
+          <p style="margin-top:0.75rem;font-size:0.85rem"><a href="https://git-scm.com/docs/git-worktree" target="_blank">Worktrees documentation →</a></p>
+        </div>
+      </div>
+    `
+  },
+  {
+    id: "expert-bugbounty",
+    title: "Expert Challenge: Bug Bounty — Fix the Reports Page",
+    subtitle: "Discover and fix multiple hidden bugs using Claude Code",
+    category: "bonus", points: 20, tier: "stretch",
+    tierLabel: "🟢 Level Up", tierDesc: "20 XP — Expert challenge",
+    content: `
+      <p>Your mission: The Reports page has multiple bugs hiding in plain sight. Your job is to discover them visually, then use Claude Code to identify and fix them all.</p>
+      <h4>Step 1: Discover the bugs (~2 minutes)</h4>
+      <p>With the app running at <a href="http://localhost:3000/reports.html" target="_blank">http://localhost:3000/reports.html</a>, investigate the Reports page:</p>
+      <ul>
+        <li>Open your browser's DevTools (F12 or Cmd+Option+I) and check the <strong>Console</strong> tab. Click around the Reports page. What do you see?</li>
+        <li>Try the filters or dropdowns on the Reports page. Do they actually change what's displayed?</li>
+        <li>Compare the "Average Order Value" stat on the Reports page against what you'd expect from the raw data. Does it look right?</li>
+      </ul>
+      <p>You should have found at least 3 distinct bugs just from visual inspection.</p>
+      <h4>Step 2: Fix the bugs with Claude Code (~3-5 minutes)</h4>
+      <p>Now paste this prompt into Claude Code:</p>
+      <pre><code>The Reports page (reports.html / reports.js) has multiple bugs compared to the rest of the app. I found that:
+1. It spams the browser console with debug log messages
+2. The filter controls don't actually filter or update the displayed data
+3. The "Average Order Value" statistic looks wrong
+Investigate the Reports page code, identify ALL the issues, and fix them. Look at how other pages like Dashboard and Inventory are implemented for reference.</code></pre>
+      <p>Claude will:</p>
+      <ul>
+        <li>Read <code>reports.js</code> and compare it with working pages like <code>dashboard.js</code> and <code>inventory.js</code></li>
+        <li>Identify all the bugs</li>
+        <li>Fix them to match the patterns used in the rest of the app</li>
+      </ul>
+      <p>Verify the fixes by refreshing <a href="http://localhost:3000/reports.html" target="_blank">http://localhost:3000/reports.html</a> and checking:</p>
+      <ul>
+        <li>No more <code>console.log</code> spam in DevTools</li>
+        <li>Filters actually update the displayed data</li>
+        <li>Average Order Value is calculated correctly (total revenue / number of orders)</li>
+      </ul>
+      <h4>Stretch Goal</h4>
+      <p>Add a new "Alerts" section to the Reports page that highlights products with stock levels below their reorder level — showing the product name, current stock, reorder level, and how many units are needed.</p>
+    `
+  },
+  {
+    id: "free-build",
+    title: "Go Further: Make It Yours",
+    subtitle: "Open-ended exploration — build whatever you want",
+    category: "bonus", points: 0, tier: "free",
+    tierLabel: "🟣 Free Build", tierDesc: "0 XP — Explore freely",
+    content: `
+      <p>You've covered the full Claude Code workflow: exploring a codebase, shipping features, writing tests, reviewing PRs, and integrating with GitHub. That's the foundation. Now it's time to go off-script.</p>
+      <h4>Ideas to get you started</h4>
+      <ul>
+        <li><strong>Add a new feature</strong> — low-stock alerts, a search bar, an export-to-CSV button, a dark mode toggle. Ask Claude to implement it end-to-end.</li>
+        <li><strong>Restyle the app</strong> — change the colour palette, swap fonts, redesign the nav. Try: <em>"Redesign the app with a dark navy and orange theme."</em></li>
+        <li><strong>Improve the data model</strong> — add supplier tracking, product categories, or a simple audit log. Let Claude write the migrations and wire up the UI.</li>
+        <li><strong>Extend the tests</strong> — ask Claude to increase coverage, add edge cases, or set up a CI workflow with GitHub Actions.</li>
+        <li><strong>Break something on purpose</strong> — introduce a bug and see how quickly Claude can find and fix it with a single prompt.</li>
+      </ul>
+      <h4>How to approach it</h4>
+      <p>Describe what you want in plain language. Claude will read the codebase, plan the changes, and implement them. Push back if the output isn't right — iterate just like you would with a teammate.</p>
+      <div class="task-tip">There's no wrong answer here. The goal is to get a feel for what Claude Code can do when you give it real, open-ended problems.</div>
+      <div class="task-tip"><strong>Go deeper:</strong> Check out the <a href="https://code.claude.com/docs/en/best-practices" target="_blank">Claude Code best practices guide</a> for tips on prompt patterns, CLAUDE.md setup, agentic workflows, and more.</div>
+    `
+  }
+]
+
+
+const CORE_TASKS = TASKS.filter(t => t.category === 'core');
+const BONUS_TASKS = TASKS.filter(t => t.category === 'bonus');
+
+const REFERENCE_CONTENT = {
+  title: "Troubleshooting & Keyboard Shortcuts",
+  content: `
+    <h4>Troubleshooting</h4>
+    <table>
+      <thead><tr><th>Situation</th><th>What to do</th></tr></thead>
+      <tbody>
+        <tr><td>Something broke and you're stuck</td><td>Copy the full error message and paste it into Claude Code</td></tr>
+        <tr><td>Claude can't see what's on screen</td><td>Take a screenshot and paste it (<code>Ctrl+V</code> / <code>Cmd+V</code>)</td></tr>
+        <tr><td>Claude's response doesn't work</td><td>Iterate: describe what went wrong and what you expected</td></tr>
+        <tr><td>Claude is struggling with complexity</td><td>Add <code>think harder</code> or <code>ultrathink</code> to your prompt</td></tr>
+        <tr><td>Need to see the full conversation</td><td>Press <code>Ctrl+O</code> to open the transcript viewer</td></tr>
+        <tr><td>Server won't start on port 3000</td><td><code>lsof -ti:3000 | xargs kill</code> then retry</td></tr>
+      </tbody>
+    </table>
+    <h4>Keyboard Shortcuts</h4>
+    <table>
+      <thead><tr><th>Key</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td><code>Enter</code></td><td>Approve a tool action</td></tr>
+        <tr><td><code>Escape</code></td><td>Deny / cancel current action</td></tr>
+        <tr><td><code>Shift+Tab</code></td><td>Toggle Plan Mode</td></tr>
+        <tr><td><code>!</code></td><td>Enter Bash mode (run shell commands)</td></tr>
+        <tr><td><code>#</code></td><td>Enter Memory mode</td></tr>
+        <tr><td><code>@filename</code></td><td>Reference a file in your prompt</td></tr>
+        <tr><td><code>Ctrl+O</code></td><td>Open transcript viewer</td></tr>
+        <tr><td><code>Ctrl+C</code></td><td>Interrupt Claude mid-response</td></tr>
+      </tbody>
+    </table>
+    <h4 style="margin-top:1.25rem">Resources</h4>
+    <ul>
+      <li><a href="https://code.claude.com/docs" target="_blank">Claude Code Documentation</a></li>
+      <li><a href="https://code.claude.com/docs/en/best-practices" target="_blank">Claude Code Best Practices Guide</a></li>
+      <li><a href="https://minfy.com" target="_blank">Minfy Technologies</a></li>
+      <li><a href="https://minfy.com/ai-coe" target="_blank">Minfy AI Centre of Excellence</a></li>
+    </ul>
+  `
+};
+
+// ═══════════════════════════════════════════
+//   LOCAL STORAGE BACKEND
+// ═══════════════════════════════════════════
+//   API CLIENT (PostgreSQL Backend)
+// ═══════════════════════════════════════════
+const API_BASE = window.location.origin.includes('localhost')
+  ? 'http://localhost:3002/api'
+  : '/api';
+
+const API = {
+  token: null,
+
+  setToken(token) {
+    this.token = token;
+    if (token) localStorage.setItem('auth_token', token);
+    else localStorage.removeItem('auth_token');
+  },
+
+  getToken() {
+    if (!this.token) this.token = localStorage.getItem('auth_token');
+    return this.token;
+  },
+
+  async request(endpoint, options = {}) {
+    const token = this.getToken();
+    const headers = {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
+      ...options.headers
+    };
+    const response = await fetch(`${API_BASE}${endpoint}`, { ...options, headers });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: 'Request failed' }));
+      throw new Error(error.error || 'Request failed');
+    }
+    return response.json();
+  },
+
+  async login(name, workshopCode) {
+    const data = await this.request('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ name, workshopCode })
+    });
+    this.setToken(data.token);
+    return data.user;
+  },
+
+  async adminLogin(password) {
+    const data = await this.request('/auth/admin', {
+      method: 'POST',
+      body: JSON.stringify({ password })
+    });
+    this.setToken(data.token);
+    return data;
+  },
+
+  async getParticipant() {
+    return this.request('/participant');
+  },
+
+  async completeTask(taskId, points) {
+    return this.request('/participant/complete-task', {
+      method: 'POST',
+      body: JSON.stringify({ taskId, points })
+    });
+  },
+
+  async getLeaderboard(workshopCode) {
+    return this.request(`/leaderboard/${workshopCode}`);
+  },
+
+  async getAdminStats(workshopCode) {
+    return this.request(`/admin/stats/${workshopCode}`);
+  },
+
+  async resetWorkshop(workshopCode) {
+    return this.request(`/admin/reset/${workshopCode}`, { method: 'DELETE' });
+  }
+};
+
+// ═══════════════════════════════════════════
+//   APP
+// ═══════════════════════════════════════════
+const App = {
+  currentView: 'workshop',
+  user: null,
+  workshopCode: null,
+  completedTasks: new Set(),
+  totalPoints: 0,
+  isAdmin: false,
+  _leaderboardTimer: null,
+
+  init() {
+    const token = localStorage.getItem('auth_token');
+    const saved = localStorage.getItem('session');
+    if (token && saved) {
+      try {
+        const s = JSON.parse(saved);
+        this.user = s.user;
+        this.workshopCode = s.workshopCode;
+        this.isAdmin = s.isAdmin || false;
+        // Reload from backend
+        if (!this.isAdmin) {
+          API.getParticipant().then(p => {
+            this.completedTasks = new Set(p.completed_tasks || []);
+            this.totalPoints = p.total_points || 0;
+            this.updatePointsDisplay();
+            if (this.currentView === 'workshop') this.renderWorkshop(document.getElementById('main-content'));
+          }).catch(err => {
+            console.error('Session restore failed:', err);
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('session');
+            this.showLoginScreen();
+          });
+        }
+        this.showApp(localStorage.getItem('currentView') || 'workshop');
+        return;
+      } catch {}
+    }
+    this.showLoginScreen();
+
+    // Enter key for login
+    document.getElementById('login-workshop').addEventListener('keydown', e => {
+      if (e.key === 'Enter') this.login();
+    });
+    document.getElementById('login-name').addEventListener('keydown', e => {
+      if (e.key === 'Enter') this.login();
+    });
+    document.getElementById('admin-bootstrap-password').addEventListener('keydown', e => {
+      if (e.key === 'Enter') this.adminLogin();
+    });
+  },
+
+  showLoginScreen() {
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('app-shell').classList.remove('active');
+  },
+
+  showAdminLogin(e) {
+    e && e.preventDefault();
+    document.getElementById('participant-login-card').style.display = 'none';
+    document.getElementById('admin-login-card').style.display = '';
+  },
+
+  showParticipantLogin(e) {
+    e && e.preventDefault();
+    document.getElementById('admin-login-card').style.display = 'none';
+    document.getElementById('participant-login-card').style.display = '';
+  },
+
+  async login() {
+    const name = document.getElementById('login-name').value.trim();
+    const code = document.getElementById('login-workshop').value.trim().toUpperCase();
+    const error = document.getElementById('login-error');
+
+    if (!name) { error.textContent = 'Please enter your name.'; error.classList.add('visible'); return; }
+    if (!code) { error.textContent = 'Please enter the workshop code.'; error.classList.add('visible'); return; }
+
+    error.classList.remove('visible');
+
+    try {
+      const user = await API.login(name, code);
+
+      this.user = { name: user.name };
+      this.workshopCode = user.workshopCode;
+      this.completedTasks = new Set(user.completedTasks || []);
+      this.totalPoints = user.totalPoints || 0;
+      this.isAdmin = false;
+
+      localStorage.setItem('session', JSON.stringify({ user: this.user, workshopCode: this.workshopCode, isAdmin: false }));
+      this.showApp('workshop');
+    } catch (err) {
+      error.textContent = err.message || 'Login failed. Please try again.';
+      error.classList.add('visible');
+    }
+  },
+
+  async adminLogin() {
+    const pw = document.getElementById('admin-bootstrap-password').value;
+    const error = document.getElementById('admin-bootstrap-error');
+    try {
+      await API.adminLogin(pw);
+      this.user = { name: 'Admin' };
+      this.workshopCode = 'MINFY2026';
+      this.isAdmin = true;
+      localStorage.setItem('session', JSON.stringify({ user: this.user, workshopCode: this.workshopCode, isAdmin: true }));
+      this.showApp('admin');
+    } catch (err) {
+      error.textContent = 'Incorrect password.';
+      error.classList.add('visible');
+    }
+  },
+
+  logout() {
+    localStorage.removeItem('session');
+    localStorage.removeItem('currentView');
+    localStorage.removeItem('auth_token');
+    API.token = null;
+    this.user = null; this.workshopCode = null; this.isAdmin = false;
+    this.completedTasks.clear(); this.totalPoints = 0;
+    if (this._leaderboardTimer) clearInterval(this._leaderboardTimer);
+    this.closeLeaderboardSSE();
+    document.body.classList.remove('cast-mode');
+    this.showLoginScreen();
+  },
+
+  showApp(view = 'workshop') {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app-shell').classList.add('active');
+    document.getElementById('user-name-display').textContent = this.user.name;
+    document.getElementById('user-avatar').textContent = this.user.name.charAt(0).toUpperCase();
+    this.updatePointsDisplay();
+    const badge = document.getElementById('workshop-badge');
+    if (badge && this.workshopCode) { badge.textContent = this.workshopCode; badge.style.display = ''; }
+    this.navigate(view);
+
+    // Mobile menu
+    document.getElementById('mobile-menu-btn').onclick = () => {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('mobile-overlay').classList.toggle('open');
+    };
+  },
+
+  closeMobileMenu() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('mobile-overlay').classList.remove('open');
+  },
+
+  navigate(view) {
+    this.currentView = view;
+    localStorage.setItem('currentView', view);
+    document.querySelectorAll('.nav-item').forEach(el => {
+      el.classList.toggle('active', el.dataset.view === view);
+    });
+    if (this._leaderboardTimer) { clearInterval(this._leaderboardTimer); this._leaderboardTimer = null; }
+    if (view !== 'leaderboard') this.closeLeaderboardSSE();
+    const main = document.getElementById('main-content');
+    if (view === 'workshop') this.renderWorkshop(main);
+    else if (view === 'leaderboard') this.renderLeaderboard(main);
+    else if (view === 'cheatsheet') this.renderCheatsheet(main);
+    else if (view === 'admin') this.renderAdmin(main);
+    this.closeMobileMenu();
+  },
+
+  updatePointsDisplay() {
+    const el = document.getElementById('user-points-display');
+    if (el) el.textContent = `${this.totalPoints} XP`;
+  },
+
+  async toggleTask(taskId) {
+    const task = TASKS.find(t => t.id === taskId);
+    if (!task) return;
+    const was = this.completedTasks.has(taskId);
+
+    if (was) {
+      this.showToast('Steps cannot be undone', 'undo');
+      return;
+    }
+
+    try {
+      const result = await API.completeTask(taskId, task.points);
+      this.completedTasks.add(taskId);
+      this.totalPoints = result.total_points;
+      this.updatePointsDisplay();
+      this.showToast(`+${task.points} XP earned!`, 'success');
+      this.showCelebration();
+      this.renderWorkshop(document.getElementById('main-content'));
+    } catch (error) {
+      console.error('Task completion error:', error);
+      this.showToast(error.message || 'Failed to complete task', 'undo');
+    }
+  },
+
+  isTaskUnlocked(taskId) {
+    if (this.isAdmin) return true;
+    const coreIndex = CORE_TASKS.findIndex(t => t.id === taskId);
+    if (coreIndex >= 0) {
+      for (let i = 0; i < coreIndex; i++) {
+        if (!this.completedTasks.has(CORE_TASKS[i].id)) return false;
+      }
+      return true;
+    }
+    const bonusIndex = BONUS_TASKS.findIndex(t => t.id === taskId);
+    if (bonusIndex >= 0) {
+      if (CORE_TASKS.some(t => !this.completedTasks.has(t.id))) return false;
+      for (let i = 0; i < bonusIndex; i++) {
+        if (!this.completedTasks.has(BONUS_TASKS[i].id)) return false;
+      }
+      return true;
+    }
+    return true;
+  },
+
+  toggleExpand(taskId) {
+    const task = TASKS.find(t => t.id === taskId);
+    if (!task) return;
+    const done = this.completedTasks.has(taskId);
+    const unlocked = this.isTaskUnlocked(taskId);
+
+    // Locked: can't open at all
+    if (!unlocked) {
+      this.showToast('Complete the previous step first', 'undo');
+      return;
+    }
+
+    // Active (unlocked but not done): can't collapse — must complete it first
+    if (!done) {
+      this.showToast('Complete this step to move on', 'undo');
+      return;
+    }
+
+    // Completed: allow toggle
+    const card = document.querySelector(`[data-task-id="${taskId}"]`);
+    if (card) card.classList.toggle('expanded');
+  },
+
+  showCelebration() {
+    const el = document.getElementById('clawd-celebration');
+    if (!el) return;
+    el.classList.remove('active');
+    void el.offsetWidth;
+    el.classList.add('active');
+    setTimeout(() => el.classList.remove('active'), 2500);
+  },
+
+  showToast(msg, type = 'success') {
+    const c = document.getElementById('toast-container');
+    if (!c) return;
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.textContent = msg;
+    c.appendChild(t);
+    setTimeout(() => t.remove(), 2700);
+  },
+
+  renderWorkshop(container) {
+    const completedCore = CORE_TASKS.filter(t => this.completedTasks.has(t.id)).length;
+    const completedBonus = BONUS_TASKS.filter(t => this.completedTasks.has(t.id)).length;
+    const pct = CORE_TASKS.length > 0 ? (completedCore / CORE_TASKS.length) * 100 : 0;
+    const maxPts = [...CORE_TASKS, ...BONUS_TASKS].reduce((s, t) => s + t.points, 0);
+
+    container.innerHTML = `
+      <div class="page-header">
+        <h1>Workshop Guide</h1>
+        <p>Minfy AI CoE — hands-on Claude Code training using a full-stack inventory management application</p>
+      </div>
+      <div class="page-body">
+        <div class="prereqs-banner">
+          <h3>Prerequisites</h3>
+          <ul>
+            <li>Claude Code installed and set up — <a href="https://code.claude.com/docs" target="_blank" style="color:var(--primary)">code.claude.com/docs</a></li>
+            <li>Terminal / VS Code open and ready</li>
+            <li>Node.js 18+ installed (<code>node --version</code> to check)</li>
+          </ul>
+          <div class="permissions-note">
+            <strong>Pro Tip:</strong> Claude Code asks permission before modifying files, running bash commands, or installing tools. Press <strong>Enter</strong> to approve. Configure auto-approvals in <code>.claude/settings.json</code> for trusted actions.
+          </div>
+        </div>
+
+        <div class="clawd-mascot">
+          <div class="emoji">⚡</div>
+          <div class="clawd-text"><strong>Welcome to the Minfy AI CoE Claude Code Workshop!</strong> Expand each step, work through the instructions, then click <strong>"I'm done"</strong> to earn points and climb the leaderboard.</div>
+        </div>
+
+        <div class="reference-card" id="reference-card">
+          <div class="reference-header" onclick="document.getElementById('reference-card').classList.toggle('expanded')">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4M10 14h.01"/></svg>
+            <span>${REFERENCE_CONTENT.title}</span>
+            <svg class="reference-chevron" width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 10 13 14 9"/></svg>
+          </div>
+          <div class="reference-body">
+            <div class="reference-body-inner">${REFERENCE_CONTENT.content}</div>
+          </div>
+        </div>
+
+        <div class="xp-legend">
+          <span class="xp-legend-label">XP Tiers:</span>
+          <span class="xp-legend-item tier-must">🔴 Must Do</span>
+          <span class="xp-legend-item tier-core">🔵 Core Skill</span>
+          <span class="xp-legend-item tier-try">🟡 Try It</span>
+          <span class="xp-legend-item tier-stretch">🟢 Level Up</span>
+          <span class="xp-legend-item tier-free">🚀 Go Further</span>
+        </div>
+
+        <div class="progress-section">
+          <div class="progress-stats">
+            <span class="completed-count">${completedCore} of ${CORE_TASKS.length} core steps${completedBonus > 0 ? ` + ${completedBonus} bonus` : ''}</span>
+            <span class="points-total">${this.totalPoints} / ${maxPts} XP</span>
+          </div>
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" style="width:${pct}%"></div>
+          </div>
+        </div>
+
+        <div class="tasks-section-label">Core Steps</div>
+        <div class="task-list">${CORE_TASKS.map(t => this.renderTaskCard(t)).join('')}</div>
+
+        ${BONUS_TASKS.length > 0 ? `
+        <div class="tasks-section-label">Expert Challenges</div>
+        <div class="task-list">${BONUS_TASKS.map(t => this.renderTaskCard(t)).join('')}</div>` : ''}
+      </div>
+    `;
+    this.addCopyButtons(container);
+  },
+
+  addCopyButtons(container) {
+    container.querySelectorAll('pre').forEach(pre => {
+      const btn = document.createElement('button');
+      btn.className = 'copy-btn';
+      btn.title = 'Copy';
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>';
+      btn.addEventListener('click', () => {
+        const text = pre.querySelector('code')?.textContent || pre.textContent;
+        navigator.clipboard.writeText(text).then(() => {
+          btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>';
+            btn.classList.remove('copied');
+          }, 1500);
+        });
+      });
+      pre.appendChild(btn);
+    });
+  },
+
+  renderTaskCard(task) {
+    const done = this.completedTasks.has(task.id);
+    const unlocked = this.isTaskUnlocked(task.id);
+    const isActive = unlocked && !done; // currently in progress
+    const tier = task.tier || 'core';
+
+    // Active step is always expanded and can't be collapsed
+    // Locked steps are never expanded
+    // Completed steps default to collapsed (user can toggle)
+    const expanded = isActive ? 'expanded' : '';
+    const cls = ['task-card', done ? 'completed' : '', !unlocked ? 'locked' : '', expanded].filter(Boolean).join(' ');
+
+    const tierConfig = {
+      must:    { label: '🔴 Must Do',    cls: 'tier-must' },
+      core:    { label: '🔵 Core',       cls: 'tier-core' },
+      try:     { label: '🟡 Try It',     cls: 'tier-try' },
+      stretch: { label: '🟢 Level Up',   cls: 'tier-stretch' },
+      free:    { label: '🚀 Go Further', cls: 'tier-free' },
+    };
+    const tc = tierConfig[tier] || tierConfig.core;
+
+    return `
+      <div class="${cls}" data-task-id="${task.id}">
+        <div class="task-header" onclick="App.toggleExpand('${task.id}')">
+          <div class="task-status-icon ${done ? 'done' : ''}">
+            ${done
+              ? '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 10 8 14 16 6"/></svg>'
+              : !unlocked
+                ? '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="9" width="8" height="7" rx="1"/><path d="M7 9V7a3 3 0 016 0v2"/></svg>'
+                : '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 10 13 14 9"/></svg>'
+            }
+          </div>
+          <div class="task-info">
+            <div class="task-title">${task.title}</div>
+            ${!unlocked
+              ? '<div class="task-subtitle locked-hint">Complete the previous step to unlock</div>'
+              : task.subtitle ? `<div class="task-subtitle">${task.subtitle}</div>` : ''
+            }
+          </div>
+          <div class="task-meta">
+            <span class="task-points ${tc.cls}">${tc.label}</span>
+            ${task.points > 0 ? `<span style="font-size:0.72rem;font-weight:700;color:var(--text-muted);font-family:'JetBrains Mono',monospace">${task.points} XP</span>` : ''}
+          </div>
+        </div>
+        <div class="task-body">
+          <div class="task-body-inner">
+            ${unlocked ? task.content : ''}
+            ${unlocked ? `
+            <div class="task-done-bar">
+              <button class="btn btn-done ${done ? 'is-completed' : ''}" onclick="event.stopPropagation(); App.toggleTask('${task.id}')" ${done ? 'disabled style="cursor:default;opacity:0.8"' : ''}>
+                ${done
+                  ? '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;margin-right:0.35rem"><polyline points="4 10 8 14 16 6"/></svg> Completed — +' + task.points + ' XP'
+                  : "Mark Complete"
+                }
+              </button>
+            </div>` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  },
+
+  renderLeaderboard(container) {
+    const isCast = document.body.classList.contains('cast-mode');
+    container.innerHTML = `
+      <div class="page-header">
+        <div style="display:flex;align-items:center;gap:1rem">
+          <h1>Leaderboard</h1>
+          <span class="live-badge"><span class="live-dot"></span>Live</span>
+        </div>
+        <p>Workshop: <strong>${this.workshopCode || ''}</strong> — real-time updates via SSE</p>
+      </div>
+      <div class="page-body">
+        <div class="leaderboard-refresh-bar">
+          <button class="btn btn-ghost" onclick="App.toggleCastMode()">${isCast ? 'Exit Cast' : 'Cast Mode'}</button>
+        </div>
+        <div id="leaderboard-content"><div class="page-loading"><div class="spinner"></div> Connecting...</div></div>
+      </div>
+    `;
+    this.connectLeaderboardSSE();
+  },
+
+  connectLeaderboardSSE() {
+    // Close any existing SSE connection
+    if (this._leaderboardSSE) {
+      this._leaderboardSSE.close();
+      this._leaderboardSSE = null;
+    }
+
+    const code = this.workshopCode || 'MINFY2026';
+    const sseUrl = API_BASE.replace('/api', '') + `/api/leaderboard/${code}/stream`;
+    const es = new EventSource(sseUrl);
+    this._leaderboardSSE = es;
+
+    es.onmessage = (event) => {
+      try {
+        const all = JSON.parse(event.data);
+        this.renderLeaderboardData(all);
+      } catch (err) {
+        console.error('SSE parse error:', err);
+      }
+    };
+
+    es.onerror = () => {
+      // EventSource auto-reconnects, just log it
+      console.warn('SSE connection lost, reconnecting...');
+    };
+  },
+
+  closeLeaderboardSSE() {
+    if (this._leaderboardSSE) {
+      this._leaderboardSSE.close();
+      this._leaderboardSSE = null;
+    }
+  },
+
+  renderLeaderboardData(all) {
+    const el = document.getElementById('leaderboard-content');
+    if (!el) return;
+
+    if (all.length === 0) {
+      el.innerHTML = `<div class="leaderboard-empty"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 36V20M14 36V12M24 36V20M34 36V8M44 36V16"/></svg><p>No participants yet. Complete some tasks to appear here!</p></div>`;
+      return;
+    }
+    const isCast = document.body.classList.contains('cast-mode');
+    const maxPts = all[0]?.total_points || 1;
+    const myName = this.user?.name || '';
+    let castHtml = '';
+    if (isCast) {
+      const avgPct = all.length > 0 ? Math.round(all.reduce((s, p) => s + (p.total_points / (CORE_TASKS.reduce((x, t) => x + t.points, 0) || 1)) * 100, 0) / all.length) : 0;
+      castHtml = `<div class="cast-stats-bar">
+        <div class="cast-stat"><div class="cast-stat-value">${all.length}</div><div class="cast-stat-label">Participants</div></div>
+        <div class="cast-stat cast-stat-progress">
+          <div class="cast-stat-label" style="margin-bottom:0.4rem">Avg Progress</div>
+          <div class="cast-progress-track"><div class="cast-progress-fill" style="width:${Math.min(avgPct,100)}%"></div></div>
+          <div class="cast-stat-value" style="font-size:1.1rem;margin-top:0.3rem">${Math.min(avgPct,100)}%</div>
+        </div>
+      </div>`;
+    }
+    el.innerHTML = castHtml + `
+      <table class="leaderboard-table">
+        <thead><tr><th style="width:60px">Rank</th><th>Participant</th><th style="width:90px">XP</th><th style="width:80px">Steps</th><th>Progress</th></tr></thead>
+        <tbody>
+          ${all.map((p, i) => `
+            <tr class="${p.name === myName ? 'leaderboard-row-me' : ''}" style="--row-index:${i}">
+              <td><span class="rank-badge ${i < 3 ? `rank-${i+1}` : 'rank-other'}">${i+1}</span></td>
+              <td class="leaderboard-name">${this.esc(p.name)}${p.name === myName ? ' <span class="leaderboard-you-badge">you</span>' : ''}</td>
+              <td class="leaderboard-points">${p.total_points || 0} XP</td>
+              <td style="color:var(--text-muted)">${(p.completed_tasks || []).length}</td>
+              <td class="leaderboard-bar-cell"><div class="leaderboard-bar"><div class="leaderboard-bar-fill" style="width:${((p.total_points||0)/maxPts)*100}%"></div></div></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  },
+
+  toggleCastMode() {
+    document.body.classList.toggle('cast-mode');
+    if (this.currentView === 'leaderboard') this.renderLeaderboard(document.getElementById('main-content'));
+  },
+
+  async renderAdmin(container) {
+    if (!this.isAdmin) {
+      container.innerHTML = `
+        <div class="page-header"><h1>Admin Panel</h1><p>Facilitator controls</p></div>
+        <div class="page-body">
+          <div class="admin-login-card">
+            <h2>Admin Authentication</h2>
+            <div class="form-group"><label>Admin Password</label><input type="password" id="admin-pw-inline" placeholder="Enter admin password"></div>
+            <div class="login-error" id="admin-inline-error"></div>
+            <button class="btn btn-primary" onclick="App.inlineAdminAuth()" style="width:auto;padding:0.7rem 1.5rem">Authenticate</button>
+          </div>
+        </div>
+      `;
+      document.getElementById('admin-pw-inline').addEventListener('keydown', e => { if (e.key === 'Enter') App.inlineAdminAuth(); });
+      return;
+    }
+
+    try {
+      const all = await API.getLeaderboard(this.workshopCode);
+      const stats = await API.getAdminStats(this.workshopCode);
+      const totalPts = parseInt(stats.total_points) || 0;
+      const avgPts = Math.round(parseFloat(stats.avg_points) || 0);
+      const completed = all.filter(p => (p.completed_tasks || []).length >= CORE_TASKS.length).length;
+
+      container.innerHTML = `
+        <div class="page-header"><h1>Admin Panel</h1><p>Minfy AI CoE Workshop Facilitator Controls — Workshop: <strong>${this.workshopCode}</strong></p></div>
+        <div class="page-body">
+          <div class="admin-stats">
+            <div class="admin-stat-card"><div class="label">Participants</div><div class="value">${stats.total_participants}</div></div>
+            <div class="admin-stat-card"><div class="label">Avg XP</div><div class="value" style="color:var(--primary)">${avgPts}</div></div>
+            <div class="admin-stat-card"><div class="label">Core Complete</div><div class="value" style="color:var(--green)">${completed}</div></div>
+            <div class="admin-stat-card"><div class="label">Total XP Earned</div><div class="value" style="color:var(--orange)">${totalPts}</div></div>
+          </div>
+
+          <div class="admin-section-title">Participant Progress</div>
+          <div class="admin-controls">
+            <button class="btn btn-ghost" onclick="App.refreshAdmin()">Refresh</button>
+            <button class="btn btn-ghost" onclick="App.exportCSV()">Export CSV</button>
+            <button class="btn btn-ghost" style="color:var(--orange);border-color:rgba(232,88,10,0.3)" onclick="App.confirmClear()">Clear All Data</button>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead><tr><th>Name</th><th>XP</th><th>Steps Done</th><th>Last Step</th></tr></thead>
+              <tbody>
+                ${all.length === 0 ? '<tr><td colspan="4" style="color:var(--text-muted);text-align:center;padding:1.5rem">No participants yet</td></tr>' : all.map(p => `
+                  <tr>
+                    <td style="font-weight:600;color:var(--text)">${this.esc(p.name)}</td>
+                    <td style="color:var(--primary);font-family:monospace;font-weight:700">${p.total_points || 0} XP</td>
+                    <td style="color:var(--text-muted)">${(p.completed_tasks || []).length} / ${TASKS.length}</td>
+                    <td style="color:var(--text-muted);font-size:0.8rem">${(p.completed_tasks || []).slice(-1)[0] || '—'}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="admin-section-title" style="margin-top:2rem">Workshop Codes</div>
+          <p style="font-size:0.85rem;color:var(--text2);margin-bottom:0.75rem">Share one of these codes with participants:</p>
+          <div class="steps-control">
+            ${['MINFY2026', 'AICOEWORKSHOP', 'MINFY', 'DEMO'].map(c => `<span class="step-toggle" style="cursor:default;font-family:monospace">${c}</span>`).join('')}
+          </div>
+        </div>
+      `;
+    } catch (error) {
+      console.error('Admin render error:', error);
+      container.innerHTML = `
+        <div class="page-header"><h1>Admin Panel</h1></div>
+        <div class="page-body"><p style="color:var(--text-muted)">Failed to load admin data. Is the backend running?</p></div>
+      `;
+    }
+  },
+
+  async inlineAdminAuth() {
+    const pw = document.getElementById('admin-pw-inline').value;
+    try {
+      await API.adminLogin(pw);
+      this.isAdmin = true;
+      const s = JSON.parse(localStorage.getItem('session') || '{}');
+      s.isAdmin = true; localStorage.setItem('session', JSON.stringify(s));
+      this.renderAdmin(document.getElementById('main-content'));
+    } catch (err) {
+      const e = document.getElementById('admin-inline-error');
+      e.textContent = 'Incorrect password.'; e.classList.add('visible');
+    }
+  },
+
+  refreshAdmin() { this.renderAdmin(document.getElementById('main-content')); },
+
+  resetParticipant(name) {
+    // Individual reset not supported via API — use clear all
+    this.showToast('Use "Clear All Data" to reset workshop', 'undo');
+  },
+
+  async confirmClear() {
+    if (confirm('Clear ALL participant data for this workshop? This cannot be undone.')) {
+      try {
+        await API.resetWorkshop(this.workshopCode);
+        this.showToast('All data cleared', 'undo');
+        this.renderAdmin(document.getElementById('main-content'));
+      } catch (error) {
+        this.showToast('Failed to clear data', 'undo');
+      }
+    }
+  },
+
+  async exportCSV() {
+    try {
+      const all = await API.getLeaderboard(this.workshopCode);
+      if (!all.length) { this.showToast('No data to export', 'undo'); return; }
+      const rows = [['Name', 'Points', 'Tasks Completed', 'Completed Task IDs']];
+      all.forEach(p => rows.push([p.name, p.total_points || 0, (p.completed_tasks||[]).length, (p.completed_tasks||[]).join('|')]));
+      const csv = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+      const a = document.createElement('a');
+      a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+      a.download = `minfy-workshop-${this.workshopCode}-${Date.now()}.csv`;
+      a.click();
+    } catch (error) {
+      this.showToast('Failed to export data', 'undo');
+    }
+  },
+
+  esc(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  },
+
+  renderCheatsheet(container) {
+    container.innerHTML = `
+      <div class="page-header">
+        <h1>Claude Code Cheat Sheet</h1>
+        <p>Quick reference for commands, shortcuts, and workflows</p>
+      </div>
+      <div class="page-body">
+        <style>
+          .cheatsheet-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1.5rem; }
+          .cheat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; }
+          .cheat-card h3 { font-size: 1rem; color: var(--primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+          .cheat-row { display: flex; align-items: flex-start; gap: 1rem; padding: 0.5rem 0; border-bottom: 1px solid var(--border-light); }
+          .cheat-row:last-child { border-bottom: none; }
+          .cheat-cmd { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; background: var(--surface2); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); color: var(--green); white-space: nowrap; }
+          .cheat-desc { font-size: 0.85rem; color: var(--text2); }
+          .key { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; background: var(--surface2); padding: 0.2rem 0.4rem; border-radius: 4px; border: 1px solid var(--border); }
+          .cheat-section { margin-bottom: 1.5rem; }
+          .cheat-section h4 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem; }
+          .badge-new { display: inline-block; padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; background: rgba(255, 179, 138, 0.2); color: var(--orange); margin-left: 0.5rem; }
+        </style>
+
+        <div class="cheatsheet-grid">
+          <!-- Installation -->
+          <div class="cheat-card">
+            <h3>📦 Installation</h3>
+            <div class="cheat-row"><span class="cheat-cmd">brew install claude-code</span><span class="cheat-desc">macOS via Homebrew</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">npm i -g @anthropic-ai/claude-code</span><span class="cheat-desc">Node.js (all platforms)</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">claude</span><span class="cheat-desc">Start Claude Code</span></div>
+          </div>
+
+          <!-- Essential Commands -->
+          <div class="cheat-card">
+            <h3>/ Essential Commands</h3>
+            <div class="cheat-row"><span class="cheat-cmd">/init</span><span class="cheat-desc">Generate CLAUDE.md</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">/compact</span><span class="cheat-desc">Compress context</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">/clear</span><span class="cheat-desc">Clear history</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">/cost</span><span class="cheat-desc">Token usage</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">/context</span><span class="cheat-desc">View context</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">/review</span><span class="cheat-desc">Multi-agent review</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">/debug</span><span class="cheat-desc">Debug workflow</span></div>
+          </div>
+
+          <!-- Permission Modes -->
+          <div class="cheat-card">
+            <h3>🔄 Permission Modes<span class="badge-new">Shift+Tab</span></h3>
+            <div class="cheat-row"><span class="cheat-cmd">Interactive</span><span class="cheat-desc">Ask before each action</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">Auto-Accept</span><span class="cheat-desc">Auto-accept safe ops</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">Plan</span><span class="cheat-desc">Read-only, plan first</span></div>
+            <div class="cheat-section">
+              <h4>Workflow</h4>
+              <div class="cheat-desc">1. Shift+Tab → Plan mode<br>2. Review plan<br>3. Shift+Tab → Interactive<br>4. Approve step-by-step</div>
+            </div>
+          </div>
+
+          <!-- CLAUDE.md -->
+          <div class="cheat-card">
+            <h3>📄 CLAUDE.md Files</h3>
+            <div class="cheat-row"><span class="cheat-cmd">~/.claude/CLAUDE.md</span><span class="cheat-desc">Global (all projects)</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">./CLAUDE.md</span><span class="cheat-desc">Project-specific (git shared)</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">./.claude/rules/*.md</span><span class="cheat-desc">Topic-specific rules</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">./CLAUDE.local.md</span><span class="cheat-desc">Personal, this project only</span></div>
+            <div class="cheat-desc" style="margin-top:0.5rem"><strong>Pro tip:</strong> Use <code>/init</code> to scaffold, then curate.</div>
+          </div>
+
+          <!-- Keyboard Shortcuts -->
+          <div class="cheat-card">
+            <h3>⌨️ Keyboard Shortcuts</h3>
+            <div class="cheat-row"><span>Toggle Plan Mode</span><span class="key">Shift + Tab</span></div>
+            <div class="cheat-row"><span>Extended thinking</span><span class="key">Option + T</span></div>
+            <div class="cheat-row"><span>Model picker</span><span class="key">Option + P</span></div>
+            <div class="cheat-row"><span>Open in editor</span><span class="key">Ctrl + E</span></div>
+            <div class="cheat-row"><span>History search</span><span class="key">Ctrl + R</span></div>
+            <div class="cheat-row"><span>Cancel/Clear</span><span class="key">Ctrl + C</span></div>
+            <div class="cheat-row"><span>Rewind/Undo</span><span class="key">Esc + Esc</span></div>
+            <div class="cheat-row"><span>Paste images</span><span class="key">Ctrl + V</span></div>
+          </div>
+
+          <!-- Extensibility -->
+          <div class="cheat-card">
+            <h3>🔌 Extensibility Stack</h3>
+            <div class="cheat-row"><span class="cheat-cmd">.claude/skills/</span><span class="cheat-desc">Auto-invoked skill definitions</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">.claude/agents/</span><span class="cheat-desc">Subagent personas</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">claude mcp add</span><span class="cheat-desc">Connect external tools</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">settings.json → hooks</span><span class="cheat-desc">Event-driven automation</span></div>
+          </div>
+
+          <!-- Hooks Lifecycle -->
+          <div class="cheat-card">
+            <h3>🪝 Hooks Lifecycle</h3>
+            <div class="cheat-section">
+              <div class="cheat-desc"><strong>1. PreToolUse Hook</strong> — Security gate, blocks dangerous actions</div>
+            </div>
+            <div class="cheat-section">
+              <div class="cheat-desc"><strong>2. Tool Executes</strong> — Bash/API/file operations run</div>
+            </div>
+            <div class="cheat-section">
+              <div class="cheat-desc"><strong>3. PostToolUse Hook</strong> — Formatter, cleans output</div>
+            </div>
+            <div class="cheat-desc" style="margin-top:0.5rem"><strong>Exit codes:</strong> 0=success, 1=error(continues), <strong>2=BLOCKS</strong></div>
+          </div>
+
+          <!-- What's New -->
+          <div class="cheat-card">
+            <h3>✨ What's New<span class="badge-new">Mar 2026</span></h3>
+            <div class="cheat-row"><span class="cheat-cmd">Opus 4.6</span><span class="cheat-desc">New default model</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">1M tokens</span><span class="cheat-desc">Max/Team/Enterprise</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">/voice</span><span class="cheat-desc">Push-to-talk, 20 languages</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">/loop</span><span class="cheat-desc">Scheduled recurring tasks</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">ultrathink</span><span class="cheat-desc">Max reasoning keyword</span></div>
+          </div>
+
+          <!-- Cost Optimization -->
+          <div class="cheat-card">
+            <h3>💰 Cost Optimization</h3>
+            <div class="cheat-row"><span class="cheat-cmd">/effort low</span><span class="cheat-desc">Quick iteration</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">/model haiku</span><span class="cheat-desc">Simple tasks</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">/compact</span><span class="cheat-desc">Free up context</span></div>
+            <div class="cheat-section">
+              <h4>Model Selection</h4>
+              <div class="cheat-desc">Haiku: Formatting<br>Sonnet: Most tasks<br>Opus: Complex/debug</div>
+            </div>
+          </div>
+
+          <!-- CLI Power Moves -->
+          <div class="cheat-card">
+            <h3>🚀 CLI Flags</h3>
+            <div class="cheat-row"><span class="cheat-cmd">-p "prompt"</span><span class="cheat-desc">One-shot mode</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">-c</span><span class="cheat-desc">Continue last session</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">--resume</span><span class="cheat-desc">Resume by ID/name</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">--worktree</span><span class="cheat-desc">Isolated git worktree</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">--effort high</span><span class="cheat-desc">Max reasoning</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">--max-budget-usd 5</span><span class="cheat-desc">Spending cap</span></div>
+          </div>
+
+          <!-- @-file Mentions -->
+          <div class="cheat-card">
+            <h3>@ File Mentions</h3>
+            <div class="cheat-row"><span class="cheat-cmd">@CLAUDE.md</span><span class="cheat-desc">Project constitution</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">@src/components</span><span class="cheat-desc">Entire directory</span></div>
+            <div class="cheat-row"><span class="cheat-cmd">@package.json</span><span class="cheat-desc">Dependencies</span></div>
+            <div class="cheat-section">
+              <h4>Example</h4>
+              <div class="cheat-desc">Review @src/api.ts for security issues</div>
+            </div>
+          </div>
+
+          <!-- Controlled Workflow -->
+          <div class="cheat-card">
+            <h3>🎯 Controlled Workflow</h3>
+            <div class="cheat-section">
+              <div class="cheat-desc">1. Plan mode → Read codebase, build plan</div>
+              <div class="cheat-desc">2. Review & refine plan</div>
+              <div class="cheat-desc">3. Interactive → Implement step by step</div>
+              <div class="cheat-desc">4. /review → Flag issues</div>
+              <div class="cheat-desc">5. Write & run tests</div>
+              <div class="cheat-desc">6. git push → Open PR</div>
+            </div>
+            <div class="cheat-desc" style="margin-top:0.5rem"><strong>One feature at a time.</strong> Plan, implement, review, test, ship.</div>
+          </div>
+        </div>
+
+        <div style="text-align:center;margin-top:2rem;color:var(--text-muted);font-size:0.85rem;">
+          <p>Claude Code — <a href="https://code.claude.com" target="_blank" style="color:var(--primary)">code.claude.com</a></p>
+        </div>
+      </div>
+    `;
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => App.init());
+</script>
+</body>
+</html>

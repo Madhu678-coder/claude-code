@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Code Cheat Sheet</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: linear-gradient(180deg, #0F1B35 0%, #1C3070 100%);
+      --surface: rgba(255, 255, 255, 0.08);
+      --surface-2: rgba(255, 255, 255, 0.12);
+      --border: rgba(255, 255, 255, 0.15);
+      --primary: #7eb8ff;
+      --primary-soft: rgba(126, 184, 255, 0.15);
+      --text: #ffffff;
+      --text-muted: rgba(255, 255, 255, 0.65);
+      --accent-blue: #7eb8ff;
+      --accent-green: #7eb89a;
+      --accent-orange: #ffb38a;
+      --accent-purple: #b8a9c9;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      background-attachment: fixed;
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover {
+      color: var(--primary);
+    }
+
+    header {
+      text-align: center;
+      padding: 2rem 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+
+    .logo {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 1rem;
+      background: rgba(255, 255, 255, 0.15);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      box-shadow: 0 0 30px rgba(28, 85, 187, 0.4);
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: #fff;
+    }
+
+    h1 span {
+      color: var(--primary);
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      backdrop-filter: blur(20px);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(126, 184, 255, 0.4);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .command {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .command:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .cmd-code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      background: var(--surface-2);
+      padding: 0.35rem 0.6rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      color: var(--accent-green);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .cmd-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .key-combo {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      background: var(--surface-2);
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .shortcut-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .shortcut-row:last-child {
+      border-bottom: none;
+    }
+
+    .tip-box {
+      background: var(--primary-soft);
+      border-left: 3px solid var(--primary);
+      padding: 1rem;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      margin-top: 1rem;
+    }
+
+    .tip-box strong {
+      color: var(--primary);
+    }
+
+    .folder-tree {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    .folder-tree .folder { color: var(--accent-blue); }
+    .folder-tree .file { color: var(--accent-green); }
+    .folder-tree .comment { color: var(--text-muted); font-style: italic; }
+
+    .example-box {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+      margin-top: 0.75rem;
+    }
+
+    .example-box .label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--primary);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .example-box pre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--text);
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+
+    .lifecycle {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .lifecycle-step {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: var(--surface-2);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+
+    .lifecycle-step .step-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #0F1B35;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .lifecycle-step .step-title {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .lifecycle-step .step-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .arrow {
+      text-align: center;
+      color: var(--primary);
+      font-size: 1.5rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-left: 0.5rem;
+    }
+
+    .badge-new {
+      background: rgba(255, 179, 138, 0.2);
+      color: var(--accent-orange);
+      border: 1px solid rgba(255, 179, 138, 0.3);
+    }
+
+    footer {
+      text-align: center;
+      padding: 3rem 0;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      margin-top: 3rem;
+    }
+
+    @media (max-width: 768px) {
+      .container { padding: 1rem; }
+      .grid { grid-template-columns: 1fr; }
+      h1 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="index.html" class="back-link">
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+      Back to Workshop
+    </a>
+
+    <header>
+      <div class="logo">⚡</div>
+      <h1>Claude Code <span>Cheat Sheet</span></h1>
+      <p class="subtitle">Quick reference for the AI-powered coding assistant</p>
+    </header>
+
+    <div class="grid">
+      <!-- Installation -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">📦</div>
+          <div class="card-title">Installation</div>
+        </div>
+        <div class="command">
+          <code class="cmd-code">brew install claude-code</code>
+          <span class="cmd-desc">macOS via Homebrew</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">npm i -g @anthropic-ai/claude-code</code>
+          <span class="cmd-desc">Node.js (all platforms)</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">claude</code>
+          <span class="cmd-desc">Start Claude Code</span>
+        </div>
+      </div>
+
+      <!-- Essential Slash Commands -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">/</div>
+          <div class="card-title">Essential Slash Commands</div>
+        </div>
+        <div class="command">
+          <code class="cmd-code">/init</code>
+          <span class="cmd-desc">Generate CLAUDE.md for project</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">/compact</code>
+          <span class="cmd-desc">Compress context window</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">/clear</code>
+          <span class="cmd-desc">Clear conversation history</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">/cost</code>
+          <span class="cmd-desc">Show token usage & costs</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">/context</code>
+          <span class="cmd-desc">View current context breakdown</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">/review</code>
+          <span class="cmd-desc">Multi-agent code review pipeline</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">/debug</code>
+          <span class="cmd-desc">Systematic debugging workflow</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">/simplify</code>
+          <span class="cmd-desc">3-agent architecture review</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">/batch</code>
+          <span class="cmd-desc">Parallel changes across worktrees</span>
+        </div>
+      </div>
+
+      <!-- Mode Switching -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">🔄</div>
+          <div class="card-title">Permission Modes<span class="badge badge-new">Shift+Tab</span></div>
+        </div>
+        <div class="command">
+          <code class="cmd-code">Interactive</code>
+          <span class="cmd-desc">Ask before each action (default)</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">Auto-Accept</code>
+          <span class="cmd-desc">Auto-accept safe operations</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">Plan</code>
+          <span class="cmd-desc">Read-only, build plan first</span>
+        </div>
+        <div class="example-box">
+          <div class="label">Example Workflow</div>
+          <pre>1. Shift+Tab → Plan mode
+2. Review proposed plan
+3. Shift+Tab → Interactive
+4. Approve step-by-step
+5. Shift+Tab → Auto-Accept for safe ops</pre>
+        </div>
+      </div>
+
+      <!-- CLAUDE.md Constitution -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">📄</div>
+          <div class="card-title">CLAUDE.md — Agent's Constitution</div>
+        </div>
+        <div class="folder-tree">
+          <div><span class="folder">~/.claude/CLAUDE.md</span> <span class="comment"># global (all projects)</span></div>
+          <div><span class="folder">./CLAUDE.md</span> <span class="comment"># project (shared via git)</span></div>
+          <div><span class="folder">./.claude/rules/*.md</span> <span class="comment"># topic-specific rules</span></div>
+          <div><span class="folder">./CLAUDE.local.md</span> <span class="comment"># personal, this project only</span></div>
+        </div>
+        <div class="example-box">
+          <div class="label">Example: Create a Rule</div>
+          <pre>---
+name: testing
+scope: "*.test.js"
+---
+Always use describe/it blocks.
+Mock external APIs.</pre>
+        </div>
+        <div class="tip-box">
+          <strong>Pro tip:</strong> Use <code>/init</code> to scaffold, then curate manually.
+        </div>
+      </div>
+
+      <!-- Keyboard Shortcuts -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">⌨️</div>
+          <div class="card-title">Keyboard Shortcuts</div>
+        </div>
+        <div class="shortcut-row">
+          <span>Toggle Plan Mode</span>
+          <span class="key-combo">Shift + Tab</span>
+        </div>
+        <div class="shortcut-row">
+          <span>Extended thinking</span>
+          <span class="key-combo">Option + T</span>
+        </div>
+        <div class="shortcut-row">
+          <span>Model picker</span>
+          <span class="key-combo">Option + P</span>
+        </div>
+        <div class="shortcut-row">
+          <span>Open in editor</span>
+          <span class="key-combo">Ctrl + E</span>
+        </div>
+        <div class="shortcut-row">
+          <span>History search</span>
+          <span class="key-combo">Ctrl + R</span>
+        </div>
+        <div class="shortcut-row">
+          <span>Cancel / Clear</span>
+          <span class="key-combo">Ctrl + C</span>
+        </div>
+        <div class="shortcut-row">
+          <span>Rewind / Undo</span>
+          <span class="key-combo">Esc + Esc</span>
+        </div>
+        <div class="shortcut-row">
+          <span>Paste images</span>
+          <span class="key-combo">Ctrl + V</span>
+        </div>
+        <div class="shortcut-row">
+          <span>Submit prompt</span>
+          <span class="key-combo">Ctrl + Enter</span>
+        </div>
+      </div>
+
+      <!-- Extensibility Stack -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">🔌</div>
+          <div class="card-title">Extensibility Stack</div>
+        </div>
+        <div class="command">
+          <code class="cmd-code">.claude/skills/</code>
+          <span class="cmd-desc">AI-driven skill definitions, auto-invoked</span>
+        </div>
+        <div class="example-box">
+          <div class="label">Example: Create a Skill</div>
+          <pre>---
+name: security-review
+description: Reviews code for security issues
+when: "*.js"
+---
+Check for SQL injection, XSS...</pre>
+        </div>
+        <div class="command">
+          <code class="cmd-code">.claude/agents/</code>
+          <span class="cmd-desc">Subagent personas with isolated context</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">claude mcp add</code>
+          <span class="cmd-desc">Connect external tools (GitHub, Slack, etc.)</span>
+        </div>
+        <div class="example-box">
+          <div class="label">Example: Add MCP Server</div>
+          <pre>claude mcp add playwright npx @playwright/mcp@latest</pre>
+        </div>
+        <div class="command">
+          <code class="cmd-code">settings.json → hooks</code>
+          <span class="cmd-desc">Deterministic code at specific events</span>
+        </div>
+      </div>
+
+      <!-- Hooks Lifecycle -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">🪝</div>
+          <div class="card-title">Hooks Lifecycle</div>
+        </div>
+        <div class="lifecycle">
+          <div class="lifecycle-step">
+            <div class="step-num">1</div>
+            <div>
+              <div class="step-title">PreToolUse Hook — The Security Gate</div>
+              <div class="step-desc">Blocks dangerous actions before execution</div>
+            </div>
+          </div>
+          <div class="arrow">↓</div>
+          <div class="lifecycle-step">
+            <div class="step-num">2</div>
+            <div>
+              <div class="step-title">Tool Executes</div>
+              <div class="step-desc">Bash command, file edit, or API call runs</div>
+            </div>
+          </div>
+          <div class="arrow">↓</div>
+          <div class="lifecycle-step">
+            <div class="step-num">3</div>
+            <div>
+              <div class="step-title">PostToolUse Hook — The Formatter</div>
+              <div class="step-desc">Auto-format code, clean output</div>
+            </div>
+          </div>
+        </div>
+        <div class="example-box" style="margin-top: 1rem;">
+          <div class="label">Example: Prettier Hook</div>
+          <pre>{
+  "hooks": {
+    "PostToolUse": [{
+      "matcher": "Edit|Write",
+      "command": "npx prettier --write $CLAUDE_FILE_PATH"
+    }]
+  }
+}</pre>
+        </div>
+        <div class="tip-box">
+          <strong>Exit codes:</strong> 0 = success, 1 = error (continues), <strong>2 = BLOCKS execution</strong>
+        </div>
+      </div>
+
+      <!-- What's New March 2026 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">✨</div>
+          <div class="card-title">What's New<span class="badge badge-new">March 2026</span></div>
+        </div>
+        <div class="command">
+          <code class="cmd-code">Opus 4.6 Default</code>
+          <span class="cmd-desc">New default model, effort defaults to medium</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">1M Token Context</code>
+          <span class="cmd-desc">Max/Team/Enterprise plans — larger context window</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">/voice</code>
+          <span class="cmd-desc">Native voice interaction, push-to-talk, 20 languages</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">/loop</code>
+          <span class="cmd-desc">Scheduled recurring tasks (cron) within a session</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">ultrathink</code>
+          <span class="cmd-desc">Special keyword for max reasoning next turn only</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">--remote</code>
+          <span class="cmd-desc">Terminal access from iPhone, iPad, Mac</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">Computer Use</code>
+          <span class="cmd-desc">Desktop automation (research preview)</span>
+        </div>
+      </div>
+
+      <!-- Cost Optimization -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">💰</div>
+          <div class="card-title">Cost Optimization</div>
+        </div>
+        <div class="command">
+          <code class="cmd-code">/effort low</code>
+          <span class="cmd-desc">Quick iteration, save thinking tokens</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">/model haiku</code>
+          <span class="cmd-desc">Mechanical tasks: formatting, renaming</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">/compact</code>
+          <span class="cmd-desc">Proactively compress — larger contexts cost more</span>
+        </div>
+        <div class="example-box">
+          <div class="label">Smart Model Selection</div>
+          <pre>Haiku: Formatting, simple edits
+Sonnet: Most development tasks
+Opus: Complex architecture, debugging</pre>
+        </div>
+        <div class="tip-box">
+          <strong>Savings:</strong> Batch API 50% off for async. Prompt Caching 90% savings for repeated inputs.
+        </div>
+      </div>
+
+      <!-- CLI Power Moves -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">🚀</div>
+          <div class="card-title">CLI Power Moves</div>
+        </div>
+        <div class="command">
+          <code class="cmd-code">claude -p "prompt"</code>
+          <span class="cmd-desc">One-shot mode (non-interactive)</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">claude -c</code>
+          <span class="cmd-desc">Continue last session</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">claude --resume</code>
+          <span class="cmd-desc">Resume by ID or name</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">claude -n "name"</code>
+          <span class="cmd-desc">Name new session</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">claude --worktree</code>
+          <span class="cmd-desc">Run in isolated git worktree</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">claude --effort high</code>
+          <span class="cmd-desc">Max reasoning effort</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">claude --max-turns 5</code>
+          <span class="cmd-desc">Limit loop iterations</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">claude --max-budget-usd 5</code>
+          <span class="cmd-desc">Spending cap for session</span>
+        </div>
+      </div>
+
+      <!-- The Controlled Workflow -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">🎯</div>
+          <div class="card-title">The Controlled Workflow</div>
+        </div>
+        <div class="lifecycle">
+          <div class="lifecycle-step">
+            <div class="step-num">1</div>
+            <div>
+              <div class="step-title">Plan mode → Read codebase, build plan</div>
+            </div>
+          </div>
+          <div class="arrow">↓</div>
+          <div class="lifecycle-step">
+            <div class="step-num">2</div>
+            <div>
+              <div class="step-title">Review & refine plan</div>
+            </div>
+          </div>
+          <div class="arrow">↓</div>
+          <div class="lifecycle-step">
+            <div class="step-num">3</div>
+            <div>
+              <div class="step-title">Interactive mode → Implement step by step</div>
+            </div>
+          </div>
+          <div class="arrow">↓</div>
+          <div class="lifecycle-step">
+            <div class="step-num">4</div>
+            <div>
+              <div class="step-title">/review → Flag issues</div>
+            </div>
+          </div>
+          <div class="arrow">↓</div>
+          <div class="lifecycle-step">
+            <div class="step-num">5</div>
+            <div>
+              <div class="step-title">Write & run tests</div>
+            </div>
+          </div>
+          <div class="arrow">↓</div>
+          <div class="lifecycle-step">
+            <div class="step-num">6</div>
+            <div>
+              <div class="step-title">git push → Open PR</div>
+            </div>
+          </div>
+        </div>
+        <div class="tip-box" style="margin-top: 1rem;">
+          <strong>One feature at a time.</strong> Plan it, implement it, review it, test it, ship it.
+        </div>
+      </div>
+
+      <!-- @-file Mentions -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">@</div>
+          <div class="card-title">@-file Mentions</div>
+        </div>
+        <div class="command">
+          <code class="cmd-code">@CLAUDE.md</code>
+          <span class="cmd-desc">Reference project constitution</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">@src/components</code>
+          <span class="cmd-desc">Reference entire directory</span>
+        </div>
+        <div class="command">
+          <code class="cmd-code">@package.json</code>
+          <span class="cmd-desc">Reference dependencies</span>
+        </div>
+        <div class="example-box">
+          <div class="label">Example Prompt</div>
+          <pre>Review @src/api.ts for security issues
+Check @CLAUDE.md for our testing standards</pre>
+        </div>
+        <div class="tip-box">
+          Use <code>@</code> to ground Claude in specific files or directories.
+        </div>
+      </div>
+
+      <!-- Web Search & Images -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">🌐</div>
+          <div class="card-title">Web Search & Images</div>
+        </div>
+        <div class="command">
+          <code class="cmd-code">/web</code>
+          <span class="cmd-desc">Search the web for current information</span>
+        </div>
+        <div class="example-box">
+          <div class="label">Example</div>
+          <pre>/web What are the latest Next.js features?</pre>
+        </div>
+        <div class="command">
+          <code class="cmd-code">Paste image (Ctrl+V)</code>
+          <span class="cmd-desc">Analyze screenshots, diagrams, UI mockups</span>
+        </div>
+        <div class="example-box">
+          <div class="label">Use Cases</div>
+          <pre>• Screenshot a bug → "Fix this error"
+• UI mockup → "Build this component"
+• Architecture diagram → "Implement this"</pre>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>Claude Code — Built by Anthropic • <a href="https://code.claude.com" style="color: var(--primary); text-decoration: none;">code.claude.com</a></p>
+    </footer>
+  </div>
+</body>
+</html>
