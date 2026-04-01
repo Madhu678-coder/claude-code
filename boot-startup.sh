@@ -13,7 +13,7 @@ echo "=========================================="
 
 # ── Config ──
 HOSTED_ZONE_ID="Z00865952G1GD0PSDTVCN"       # <-- Replace with your Route53 Hosted Zone ID
-RECORD_NAME="claude-workshop.coebuilds.swayam.aiso"
+RECORD_NAME="claude-workshop.coebuilds.swayam.ai"
 APP_DIR="/home/ec2-user/workshop"
 
 # ── Wait for network ──
