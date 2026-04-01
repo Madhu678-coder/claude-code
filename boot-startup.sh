@@ -11,9 +11,9 @@ echo "Boot startup: $(date)"
 echo "=========================================="
 
 # ── Config ──
-HOSTED_ZONE_ID="YOUR_HOSTED_ZONE_ID"       # <-- Replace with your Route53 Hosted Zone ID
+HOSTED_ZONE_ID="Z00865952G1GD0PSDTVCN"       # <-- Replace with your Route53 Hosted Zone ID
 RECORD_NAME="claude-workshop.coebuilds.swayam.aiso"
-APP_DIR="/home/ec2-user/kluster-claude-workshop"  # <-- Replace with your actual project path
+APP_DIR="/home/ec2-user/workshop"
 
 # ── Wait for network ──
 echo "Waiting for network..."
