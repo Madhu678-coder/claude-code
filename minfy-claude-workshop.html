@@ -1699,6 +1699,10 @@ const App = {
     if (badge && this.workshopCode) { badge.textContent = this.workshopCode; badge.style.display = ''; }
     this.navigate(view);
 
+    // Scroll to top on login
+    const mainContent = document.getElementById('main-content');
+    if (mainContent) mainContent.scrollTop = 0;
+
     // Mobile menu
     document.getElementById('mobile-menu-btn').onclick = () => {
       document.getElementById('sidebar').classList.toggle('open');
