@@ -106,11 +106,19 @@ app.post('/api/auth/login', async (req, res) => {
   }
 
   try {
+    // Check if name is already taken
+    const existing = await pool.query(
+      'SELECT id, name, workshop_code, total_points, completed_tasks FROM participants WHERE LOWER(name) = LOWER($1) AND workshop_code = $2',
+      [name, workshopCode.toUpperCase()]
+    );
+
+    if (existing.rows.length > 0) {
+      return res.status(409).json({ error: 'This name is already taken. Please choose a different name.' });
+    }
+
     const result = await pool.query(
       `INSERT INTO participants (name, workshop_code) 
        VALUES ($1, $2) 
-       ON CONFLICT (name, workshop_code) 
-       DO UPDATE SET updated_at = NOW()
        RETURNING id, name, workshop_code, total_points, completed_tasks`,
       [name, workshopCode.toUpperCase()]
     );
