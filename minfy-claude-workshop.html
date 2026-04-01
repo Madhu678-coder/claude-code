@@ -1749,7 +1749,13 @@ const App = {
       this.updatePointsDisplay();
       this.showToast(`+${task.points} XP earned!`, 'success');
       this.showCelebration();
-      this.renderWorkshop(document.getElementById('main-content'));
+
+      // Save scroll position before re-render
+      const mainContent = document.getElementById('main-content');
+      const scrollTop = mainContent ? mainContent.scrollTop : 0;
+      this.renderWorkshop(mainContent);
+      // Restore scroll position after re-render
+      if (mainContent) mainContent.scrollTop = scrollTop;
     } catch (error) {
       console.error('Task completion error:', error);
       this.showToast(error.message || 'Failed to complete task', 'undo');
@@ -2034,7 +2040,7 @@ const App = {
       return;
     }
     const isCast = document.body.classList.contains('cast-mode');
-    const maxPts = all[0]?.total_points || 1;
+    const maxPts = [...CORE_TASKS, ...BONUS_TASKS].reduce((s, t) => s + t.points, 0) || 1;
     const myName = this.user?.name || '';
     let castHtml = '';
     if (isCast) {
