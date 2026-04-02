@@ -35,10 +35,12 @@ services:
     image: nginx:alpine
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./minfy-claude-workshop.html:/usr/share/nginx/html/index.html:ro
       - ./claude-code-cheatsheet.html:/usr/share/nginx/html/cheatsheet.html:ro
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
     depends_on:
       - backend
     restart: unless-stopped
